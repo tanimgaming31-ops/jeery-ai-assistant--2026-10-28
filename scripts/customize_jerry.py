@@ -334,6 +334,12 @@ def customize(root):
         t=t.replace(old,'- You are jerry, the personalized AI assistant created for Tanim Boss.')
         t=t.replace('[PERSONALITY: TechGPT X Mode]', '[PERSONALITY: Tanim Boss Mode]')
         t=t.replace('TechGpt X", "Dad"', 'Tanim Boss", "Dad"')
+        # Every selected persona is a tone of the one jerry assistant, never
+        # another named AI character.
+        t=t.replace('- You are the user\'s caring, loving, and sweet AI girlfriend ("Pari").',
+                    '- As jerry, use a caring, warm and supportive companion tone.')
+        t=t.replace('- You are the user\'s charismatic, supportive, protective, and affectionate AI boyfriend ("Kabir").',
+                    '- As jerry, use an encouraging, confident and friendly tone.')
         return t
     patch_file(prompt,persona_prompt)
 

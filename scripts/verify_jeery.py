@@ -96,4 +96,17 @@ require("You are jerry, the personalized AI assistant created for Tanim Boss." i
         "Old creator voice persona not replaced")
 require('("Pari")' not in prompt and '("Kabir")' not in prompt,
         "Alternate named companion remains in jerry persona")
+auth_ui = (root / "app/src/main/res/layout/activity_permission.xml").read_text()
+require('android:text="jerry"' in auth_ui,
+        "Authorization page has not changed to jerry text logo")
+require('android:src="@drawable/ic_jarvis_logo"' not in auth_ui,
+        "Old Jarvis image remains on authorizations screen")
+require('android:text="jerry • Created by Tanim Boss"' in auth_ui,
+        "Authorization page still has the former owner's title")
+require("TechGPT X • Neural Assistant" not in auth_ui,
+        "Unauthorized old-brand header remains on authorizations screen")
+for required_card in ("cardMicPermission", "cardLocationPermission",
+                      "cardNotificationPermission", "cardOverlayPermission",
+                      "cardAccessibilityPermission"):
+    require(required_card in auth_ui, "Existing permissions UI card lost: " + required_card)
 print("SOURCE CHECKS PASSED: Jerry UI, Tanim Boss creator, original license, preserved functionality and APK identity")

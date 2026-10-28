@@ -57,4 +57,21 @@ require("btnSocialTelegram" not in settings_ui and "btnSocialTelegram" not in se
 require("btnHandsFreeOfficialTelegram" not in handsfree_ui and "btnHandsFreeOfficialTelegram" not in handsfree_code,
         "handsfree promo references remain")
 require("jerry_about_bengali" in strings and "Tanim Boss" in strings, "About Me text missing")
+privacy_ui = (root / "app/src/main/res/layout/activity_privacy_shield.xml").read_text()
+privacy_code = (root / "app/src/main/java/com/jarvis/assistant/ui/settings/PrivacyShieldActivity.kt").read_text()
+identity_code = (root / "app/src/main/java/com/jarvis/assistant/security/AppIdentityVerifier.kt").read_text()
+require('android:text="jerry"' in privacy_ui, "Privacy Shield still shows old picture logo")
+require('@drawable/ic_jarvis_logo' not in privacy_ui, "Privacy Shield still displays original author logo")
+require("jerry — Created by Tanim Boss" in privacy_ui, "Owner missing from Privacy Shield")
+require("@string/jerry_about_heading" in privacy_ui, "Tanim About Me card missing")
+for bad in ("TechGPT X", "Tech GPTx", "COMMUNITY &amp; DISCUSSION GROUPS",
+            "btnJoinOfficialTelegram", "btnJoinInstagram", "btnJoinYoutube",
+            "Open Source Coming Soon", "100% PRIVATE", "ZERO TRACKING"):
+    require(bad not in privacy_ui, "Privacy Shield unrequested promo/claim remains: "+bad)
+require("btnJoinOfficialTelegram" not in privacy_code, "Privacy source click handler remains")
+require("Created and customized by: Tanim Boss" in identity_code, "Owner identity missing")
+require("Original code and license credit: Tech GPTx" in identity_code,
+        "Required original source UI credit missing")
+require('appendLine("Developer:' not in identity_code,
+        "Old developer wrongly shown as creator of jerry")
 print("SOURCE CHECKS PASSED: Jerry UI, Tanim Boss creator, original license, preserved functionality and APK identity")

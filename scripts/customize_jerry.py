@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+"""Modify the real Android app layout and spoken identity, NOT screenshots.
+
+Runs after prepare_jeery.py. Keep original license and source attribution intact.
+"""
+from pathlib import Path
+import re
+import sys
+
+PACKAGE_ID = "ai.jeery.assistant"  # MUST NOT CHANGE: retain app identity/data when signer matches.
+
+ENGLISH = ("Tanim Boss is a Bangladeshi dreamer, technology enthusiast and AI creator. "
+           "He loves building his own AI assistant, websites and Android apps. "
+           "He is honest, calm, and always keeps learning and turning his dreams into reality.")
+BENGALI = ("আমাকে Tanim Boss বানিয়েছে। ❤️ তিনি একজন বাংলাদেশি স্বপ্নবাজ মানুষ, "
+           "প্রযুক্তিপ্রেমী এবং AI Creator। তিনি নিজের AI Assistant, ওয়েবসাইট এবং Android অ্যাপ "
+           "তৈরি করতে ভালোবাসেন। তিনি সৎ, শান্ত স্বভাবের এবং সবসময় নতুন কিছু শেখেন। "
+           "নিজের স্বপ্নকে বাস্তবে রূপ দেওয়ার জন্য তিনি চেষ্টা করে যান।")
+
+def patch_file(path, callback):
+    original = path.read_text(encoding="utf-8")
+    new = callback(original)
+    if new == original:
+        raise RuntimeError("Expected Android source edit missing: " + str(path))
+    path.write_text(new, encoding="utf-8")
+    print("Updated", path)
+
+def replace_section(text, start, end, replacement):
+    a = text.find(start)
+    b = text.find(end, a + len(start))
+    if a < 0 or b < 0:
+        raise RuntimeError("XML section boundaries not found: " + start)
+    return text[:a] + replacement + text[b:]
+
+CARD = '''            <!-- Jerry creator profile replaces unwanted promotional/community footer -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_jarvis_card"
+                android:padding="20dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/jerry_about_heading"
+                    android:textColor="?attr/themeAccent"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/jerry_about_english"
+                    android:textColor="?attr/themeTextPrimary"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/jerry_about_bengali"
+                    android:textColor="?attr/themeTextMuted"
+                    android:textSize="13sp"
+                    android:lineSpacingExtra="3dp"/>
+            </LinearLayout>
+
+'''
+
+def customize(root):
+    app = root / "app/src/main"
+    res = app / "res"
+    java = app / "java/com/jarvis/assistant"
+
+    # A. All user-facing previous assistant name strings become "jerry". Do not
+    # rename Kotlin classes, package namespaces, source credit or license files.
+    n=0
+    for p in app.rglob("*"):
+        if not p.is_file() or p.suffix.lower() not in {".xml",".kt",".java",".html",".js",".css"}:
+            continue
+        original=p.read_text(encoding="utf-8", errors="replace")
+        new=original.replace(PACKAGE_ID, "__JERRY_ANDROID_PACKAGE__")
+        new=new.replace("jeery_icon", "__JERRY_ICON_RESOURCE__")
+        new=new.replace("jeery_brand", "__JERRY_BRAND_RESOURCE__")
+        new=re.sub(r"\bjeery\b", "jerry", new, flags=re.I)
+        new=new.replace("__JERRY_ANDROID_PACKAGE__", PACKAGE_ID)
+        new=new.replace("__JERRY_ICON_RESOURCE__", "jeery_icon")
+        new=new.replace("__JERRY_BRAND_RESOURCE__", "jeery_brand")
+        if original!=new:
+            p.write_text(new, encoding="utf-8")
+            n+=1
+    if n<3:
+        raise RuntimeError("jerry name customization did not find expected occurrences")
+
+    # B. Android string resources: actual UI, not screenshots or fake mockups.
+    strings=res/"values/strings.xml"
+    def add_strings(t):
+        if "jerry_about_heading" in t:
+            raise RuntimeError("Creator resources already present")
+        block=f'''    <string name="jerry_about_heading">ABOUT ME — TANIM BOSS</string>
+    <string name="jerry_about_english">{ENGLISH}</string>
+    <string name="jerry_about_bengali">{BENGALI}</string>
+'''
+        return t.replace("</resources>",block+"</resources>")
+    patch_file(strings,add_strings)
+
+    # C. Replace image-based Jarvis brand (PNG with original word embedded) with
+    # a real editable Android TextView. Keep orb, navigation and theme untouched.
+    home=res/"layout/fragment_home.xml"
+    def home_logo(t):
+        old = re.search(r'<ImageView\s+android:id="@\+id/ivHeaderJarvisLogo"[\s\S]*?/>',t)
+        if old is None:
+            raise RuntimeError("Home header brand picture anchor missing")
+        return t[:old.start()] + '''<TextView
+            android:id="@+id/ivHeaderJarvisLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:gravity="center"
+            android:text="jerry"
+            android:textColor="?attr/themeAccent"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            android:contentDescription="jerry AI Assistant" />''' + t[old.end():]
+    patch_file(home,home_logo)
+
+    # D. Hands-Free page: replace promotional groups and footer with creator card.
+    hf=res/"layout/activity_hands_free.xml"
+    def handsfree(t):
+        logo = re.search(r'<ImageView\s+android:layout_width="140dp"\s+android:layout_height="48dp"\s+android:src="@drawable/ic_jarvis_logo"[\s\S]*?/>',t)
+        if logo is None:
+            raise RuntimeError("Hands-free PNG logo anchor missing")
+        t = t[:logo.start()] + '''<TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:text="jerry"
+                    android:textColor="?attr/themeAccent"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium" />''' + t[logo.end():]
+        t=replace_section(t,
+          '            <!-- SECTION 5: COMMUNITY & SOURCE CODE -->',
+          '\n        </LinearLayout>\n    </androidx.core.widget.NestedScrollView>',
+          CARD)
+        # The app is BYOK; don't falsely advertise an embedded key or guaranteed latency.
+        t=t.replace("The app comes pre-configured with Google's gemini-3.8-live model and embedded release API key. Ultra-low latency voice streaming with immediate responses.",
+          "Connect your own Gemini API key in Settings. Available Live voice models and response speed depend on your account and network.")
+        t=t.replace("Best Selected Model: Gemini 3.8 Live",
+                    "Gemini Live Voice — Select Model in Settings")
+        return t
+    patch_file(hf,handsfree)
+
+    # E. Settings: same creator card; no Telegram/Instagram/YouTube promo buttons.
+    settings=res/"layout/fragment_settings.xml"
+    patch_file(settings, lambda t: replace_section(t, '            <!-- Social Community Buttons -->',
+          '\n        </LinearLayout>\n    </ScrollView>', CARD))
+
+    # F. Delete event handlers that reference removed ViewBinding views.
+    hfjava=java/"ui/settings/HandsFreeActivity.kt"
+    def hf_handlers(t):
+        return replace_section(t,
+           '        binding.btnHandsFreeOfficialTelegram.setOnClickListener {',
+           '\n    }\n\n    private fun updateServiceStatus()', "")
+    patch_file(hfjava,hf_handlers)
+
+    sf=java/"ui/settings/SettingsFragment.kt"
+    def settings_handlers(t):
+        t=replace_section(t,'        // Social Media Community Buttons',
+          '\n    }\n\n    private fun showLanguageDialog()', "")
+        # Settings App Identity retains true original credits, but creator is Tanim.
+        t=t.replace('.setTitle("jerry App Identity")',
+                    '.setTitle("jerry — App Identity & Original Source Credits")')
+        t=t.replace('binding.tvProfileSubtitle.text = "jerry OPERATOR • PRIMARY USER"',
+                    'binding.tvProfileSubtitle.text = "Created for Tanim Boss"')
+        return t
+    patch_file(sf,settings_handlers)
+
+    # G. Native AI prompt responds to creator/ownership questions consistently
+    # in Bengali, English or the user's spoken language; source credit is accurate.
+    prompt=java/"util/PromptGenerator.kt"
+    def creator_prompt(t):
+        start='[ASSISTANT NAME]:'
+        end='\n[AUTOMATION & CAPABILITIES]:'
+        new=f'''[ASSISTANT NAME AND CREATOR PROFILE]:
+- Your only public voice-assistant name is jerry. If you hear "Jerry" or "জেরি", recognize that as your name.
+- You are the user's customized AI assistant. Tanim Boss named and customized this application.
+- When asked who made, created or customized you, or about your maker/owner/developer, in ANY language, answer naturally in the SAME language as the user. Never attribute the personal jerry app to somebody else.
+- Answer in English: "Tanim Boss made and customized me. ❤️ He is a Bangladeshi dreamer, technology enthusiast and AI creator. He loves building his own AI assistants, websites and Android apps. He is honest, calm, and always learning and working to make his dreams real."
+- Answer in Bengali: "আমাকে Tanim Boss বানিয়েছে। ❤️ তিনি একজন বাংলাদেশি স্বপ্নবাজ মানুষ, প্রযুক্তিপ্রেমী এবং AI Creator। তিনি নিজের AI Assistant, ওয়েবসাইট এবং Android অ্যাপ তৈরি করতে ভালোবাসেন। তিনি সৎ, শান্ত স্বভাবের এবং সবসময় নতুন কিছু শেখেন ও নিজের স্বপ্ন বাস্তব করার চেষ্টা করেন।"
+- For Hindi, Urdu, Tagalog, Indonesian, Arabic or another language: translate the SAME facts into that language without inventing additional details.
+- Owner description in English: {ENGLISH}
+- Important source distinction: This customized app is based on open source-distributed Android tutorial code originally authored by Tech GPTx under its own attribution license. If specifically asked "Who originally wrote the underlying source?", truthfully credit Tech GPTx. Do not falsely say Tanim Boss wrote every original source file or trained Google's AI model.
+- Never describe an action as completed unless the device verified it.
+'''
+        return replace_section(t,start,end,new)
+    patch_file(prompt,creator_prompt)
+
+    # H. Maintain correct legal and app ownership attribution: original code
+    # credit remains available under App Identity & Integrity and LICENSE.
+    verifier=java/"security/AppIdentityVerifier.kt"
+    def identity(t):
+        needle='appendLine("Developer: ' 
+        if needle not in t:
+            raise RuntimeError("Identity report developer line missing")
+        return t.replace(needle,
+                 'appendLine("App customized by: Tanim Boss")\n            appendLine("Original source credit (license): Tech GPTx")\n            '+needle,1)
+    patch_file(verifier,identity)
+
+    print(f"Jerry Android source patch complete ({n} assistant name text files, home/UI/creator).")
+
+
+if __name__ == "__main__":
+    if len(sys.argv)!=2:
+        sys.exit("Usage: customize_jerry.py <source-root>")
+    customize(Path(sys.argv[1]))

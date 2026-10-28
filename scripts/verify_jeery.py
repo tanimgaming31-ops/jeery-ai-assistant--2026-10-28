@@ -22,7 +22,7 @@ require('applicationId = "ai.jeery.assistant"' in gradle, "wrong Android app ID"
 require('namespace = "com.jarvis.assistant"' in gradle, "internal Kotlin namespace broken")
 strings = (root / "app/src/main/res/values/strings.xml").read_text()
 for key in ("app_name", "jarvis_title", "chat_label_jarvis"):
-    require('<string name="' + key + '">jeery</string>' in strings, "name resource: " + key)
+    require('<string name="' + key + '">jerry</string>' in strings, "name resource: " + key)
 require('name=".background.JarvisConversationService"' in
         (root / "app/src/main/AndroidManifest.xml").read_text(),
         "foreground service manifest was lost")
@@ -30,12 +30,31 @@ security = (root / "app/src/main/java/com/jarvis/assistant/security/SecurityMana
 require('private const val EXPECTED_PACKAGE = "ai.jeery.assistant"' in security,
         "unmodified clone protection would force close on startup")
 prompt = (root / "app/src/main/java/com/jarvis/assistant/util/PromptGenerator.kt").read_text()
-require("Your sole assistant name is jeery" in prompt, "AI identity missing")
+require("Your only public voice-assistant name is jerry" in prompt, "AI identity missing")
+require("Tanim Boss made and customized me" in prompt, "Tanim creator reply missing")
+require("আমাকে Tanim Boss বানিয়েছে" in prompt, "Bengali creator reply missing")
 require("[CREATOR IDENTITY & ATTRIBUTION]:" not in prompt, "old speaker identity active")
 wake = (root / "app/src/main/java/com/jarvis/assistant/background/JarvisConversationService.kt").read_text()
-require('"hey jerry"' in wake and '"jeery"' in wake, "wake word aliases missing")
+require('"hey jerry"' in wake and '"jerry"' in wake, "wake word missing")
 require('wordConfMap["jerry"]' in wake, "wake-word confidence handler not updated")
 require('"jarvis"' not in wake[wake.find('private val VALID_WAKE_PHRASES'):wake.find('private fun checkVoskHypothesis')],
         "old wake phrase still active")
 require((root / "app/src/main/res/drawable/jeery_icon.xml").is_file(), "new icon not present")
-print("SOURCE CHECKS PASSED: jeery identity, preserved features, license, wake-word and icons")
+home = (root / "app/src/main/res/layout/fragment_home.xml").read_text()
+settings_ui = (root / "app/src/main/res/layout/fragment_settings.xml").read_text()
+handsfree_ui = (root / "app/src/main/res/layout/activity_hands_free.xml").read_text()
+settings_code = (root / "app/src/main/java/com/jarvis/assistant/ui/settings/SettingsFragment.kt").read_text()
+handsfree_code = (root / "app/src/main/java/com/jarvis/assistant/ui/settings/HandsFreeActivity.kt").read_text()
+require('android:text="jerry"' in home, "home logo has not been replaced with real text")
+require('android:src="@drawable/ic_jarvis_logo"' not in home, "old Jarvis image remains on Home")
+require('android:src="@drawable/ic_jarvis_logo"' not in handsfree_ui, "old Jarvis image remains in Hands Free")
+for ui in (settings_ui, handsfree_ui):
+    require("@string/jerry_about_heading" in ui, "Tanim profile card not in Android UI")
+    require("TECHGPT X" not in ui.upper(), "old promotional footer remains")
+    require("Official Telegram Channel" not in ui, "promotional social links remain")
+require("btnSocialTelegram" not in settings_ui and "btnSocialTelegram" not in settings_code,
+        "settings promo references remain")
+require("btnHandsFreeOfficialTelegram" not in handsfree_ui and "btnHandsFreeOfficialTelegram" not in handsfree_code,
+        "handsfree promo references remain")
+require("jerry_about_bengali" in strings and "Tanim Boss" in strings, "About Me text missing")
+print("SOURCE CHECKS PASSED: Jerry UI, Tanim Boss creator, original license, preserved functionality and APK identity")

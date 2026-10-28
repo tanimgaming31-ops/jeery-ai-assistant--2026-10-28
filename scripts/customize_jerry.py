@@ -326,9 +326,11 @@ def customize(root):
     patch_file(models,model_persona)
 
     def persona_prompt(t):
-        old='- You are TechGPT X, the pinnacle of advanced AI engineering created by the @TechGptX team.'
+        # The first rebrand stage already changes the old branded persona text
+        # to "You are jerry, a capable ..."; patch that stage's exact output.
+        old='- You are jerry, a capable and thoughtful voice assistant.'
         if old not in t:
-            raise RuntimeError("Old TechGPT X voice persona still present but anchor unexpected")
+            raise RuntimeError("Expected first-stage jerry persona line missing")
         t=t.replace(old,'- You are jerry, the personalized AI assistant created for Tanim Boss.')
         t=t.replace('[PERSONALITY: TechGPT X Mode]', '[PERSONALITY: Tanim Boss Mode]')
         t=t.replace('TechGpt X", "Dad"', 'Tanim Boss", "Dad"')

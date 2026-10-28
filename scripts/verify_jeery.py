@@ -74,4 +74,13 @@ require("Original code and license credit: Tech GPTx" in identity_code,
         "Required original source UI credit missing")
 require('appendLine("Developer:' not in identity_code,
         "Old developer wrongly shown as creator of jerry")
+persona_layout=(root / "app/src/main/res/layout/activity_persona.xml").read_text()
+persona_source=(root / "app/src/main/java/com/jarvis/assistant/ui/settings/PersonaActivity.kt").read_text()
+models_source=(root / "app/src/main/java/com/jarvis/assistant/data/model/GeminiLiveModels.kt").read_text()
+for content in (persona_layout,persona_source):
+    require("TechGPT X" not in content, "Old third-party promotional persona is still visible")
+require('const val PERSONALITY_TECHGPT_X = "Tanim Boss Mode"' in models_source,
+        "Creator persona is not labeled for Tanim Boss")
+require("You are jerry, the personalized AI assistant created for Tanim Boss." in prompt,
+        "Old creator voice persona not replaced")
 print("SOURCE CHECKS PASSED: Jerry UI, Tanim Boss creator, original license, preserved functionality and APK identity")

@@ -294,6 +294,47 @@ def customize(root):
         return t
     patch_file(verifier,revised_identity)
 
+    # J. Rename all creator-branded *personalities* and old default user labels.
+    # Internal Kotlin identifiers are kept for compatibility; the actual persona
+    # labels and voice instruction refer only to jerry / Tanim Boss.
+    persona_layout=res/"layout/activity_persona.xml"
+    def persona_ui(t):
+        if "TechGPT X" not in t:
+            raise RuntimeError("Old persona promotional label not found")
+        t=t.replace("TechGPT X Mode", "Tanim Boss Mode")
+        t=t.replace("TechGPT X", "Tanim Boss")
+        t=t.replace("Intelligent, witty &amp; strategic assistant by Tanim Boss",
+                    "Personalized voice assistant for Tanim Boss")
+        return t
+    patch_file(persona_layout,persona_ui)
+
+    persona_java=java/"ui/settings/PersonaActivity.kt"
+    def persona_code(t):
+        if '"TechGPT X"' not in t:
+            raise RuntimeError("Old persona default identity not found")
+        t=t.replace('"TechGPT X Neural Core"', '"Tanim Boss Creator Mode"')
+        t=t.replace('"TechGPT X"', '"Tanim Boss"')
+        return t
+    patch_file(persona_java,persona_code)
+
+    models=java/"data/model/GeminiLiveModels.kt"
+    def model_persona(t):
+        old='const val PERSONALITY_TECHGPT_X = "TechGPT X Mode"'
+        if old not in t:
+            raise RuntimeError("Old persona constant display name not found")
+        return t.replace(old,'const val PERSONALITY_TECHGPT_X = "Tanim Boss Mode"')
+    patch_file(models,model_persona)
+
+    def persona_prompt(t):
+        old='- You are TechGPT X, the pinnacle of advanced AI engineering created by the @TechGptX team.'
+        if old not in t:
+            raise RuntimeError("Old TechGPT X voice persona still present but anchor unexpected")
+        t=t.replace(old,'- You are jerry, the personalized AI assistant created for Tanim Boss.')
+        t=t.replace('[PERSONALITY: TechGPT X Mode]', '[PERSONALITY: Tanim Boss Mode]')
+        t=t.replace('TechGpt X", "Dad"', 'Tanim Boss", "Dad"')
+        return t
+    patch_file(prompt,persona_prompt)
+
     print(f"Jerry Android source patch complete ({n} assistant name text files, home/UI/creator).")
 
 

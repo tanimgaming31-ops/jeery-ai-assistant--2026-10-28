@@ -398,6 +398,31 @@ def customize(root):
         return t.replace(old,new,1)
     patch_file(sf,source_license_action)
 
+    # Branding-only change for the existing Settings > Authorizations screen.
+    auth_xml = res / "layout/activity_permission.xml"
+    def auth_brand(t):
+        old = '''<ImageView
+                    android:layout_width="140dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/ic_jarvis_logo"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="jerry Logo" />'''
+        if old not in t:
+            raise RuntimeError("Authorization screen logo source not found")
+        new = '''<TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:text="jerry"
+                    android:textColor="?attr/themeAccent"
+                    android:textSize="32sp"
+                    android:textStyle="bold" />'''
+        t = t.replace(old, new, 1)
+        t = t.replace('android:text="TechGPT X • Neural Assistant"',
+                      'android:text="jerry • Created by Tanim Boss"', 1)
+        return t
+    patch_file(auth_xml, auth_brand)
+
     print(f"Jerry Android source patch complete ({n} assistant name text files, home/UI/creator).")
 
 

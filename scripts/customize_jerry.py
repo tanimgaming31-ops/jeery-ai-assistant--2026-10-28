@@ -343,6 +343,61 @@ def customize(root):
         return t
     patch_file(prompt,persona_prompt)
 
+    # K. The default App Identity dialog shows only the jerry owner's identity.
+    # Mandatory upstream attribution stays accessible from "Original Source
+    # Credits" on that same Settings dialog, per the source license.
+    def owner_identity_dialog(t):
+        obsolete = (
+            '            appendLine("Original code and license credit: Tech GPTx")\n'
+            '            appendLine("Original source copyright: ${BuildConfig.COPYRIGHT_OWNER}")\n'
+        )
+        if obsolete not in t:
+            raise RuntimeError("Previous third-party credit lines missing")
+        t=t.replace(obsolete,
+            '            appendLine("Owner: Tanim Boss")\n'
+            '            appendLine("Edition: jerry by Tanim Boss")\n',1)
+        old='            appendLine("Official application ID: ${context.packageName}")\n'
+        if old not in t:
+            raise RuntimeError("Android package label missing")
+        t=t.replace(old,'',1)
+        point="    fun report(context: Context): String {"
+        if point not in t:
+            raise RuntimeError("Identity report method missing")
+        disclosure='''    /** Original source attribution displayed under Settings > Original Source Credits. */
+    fun licenseNotice(context: Context): String = buildString {
+        appendLine("Original source code by Tech GPTx / Rehaan.")
+        appendLine("Original copyright: © 2026 Tech GPTx. All Rights Reserved.")
+        appendLine("License: TECH GPTx SOURCE CODE & CONTENT CREATOR LICENSE (TAMCL v1.0)")
+        appendLine("Repository: https://github.com/techgptx/Playlist")
+        appendLine("Android app package: ${context.packageName}")
+        append("Original attribution required by the source license. The jerry app customization and personal creator profile are by Tanim Boss.")
+    }
+
+'''
+        return t.replace(point,disclosure+point,1)
+    patch_file(verifier,owner_identity_dialog)
+
+    def source_license_action(t):
+        title='.setTitle("jerry — App Identity & Original Source Credits")'
+        if title not in t:
+            raise RuntimeError("App Identity dialog title missing")
+        t=t.replace(title,'.setTitle("jerry — Tanim Boss")',1)
+        old='''.setMessage(com.jarvis.assistant.security.AppIdentityVerifier.report(requireContext()))
+                .setPositiveButton("Close", null)'''
+        if old not in t:
+            raise RuntimeError("Identity dialog buttons missing")
+        new='''.setMessage(com.jarvis.assistant.security.AppIdentityVerifier.report(requireContext()))
+                .setNeutralButton("Original Source Credits") { _, _ ->
+                    MaterialAlertDialogBuilder(requireContext())
+                        .setTitle("Original Source Code & License")
+                        .setMessage(com.jarvis.assistant.security.AppIdentityVerifier.licenseNotice(requireContext()))
+                        .setPositiveButton("Close", null)
+                        .show()
+                }
+                .setPositiveButton("Close", null)'''
+        return t.replace(old,new,1)
+    patch_file(sf,source_license_action)
+
     print(f"Jerry Android source patch complete ({n} assistant name text files, home/UI/creator).")
 
 

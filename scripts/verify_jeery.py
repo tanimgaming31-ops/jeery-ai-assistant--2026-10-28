@@ -70,8 +70,19 @@ for bad in ("TechGPT X", "Tech GPTx", "COMMUNITY &amp; DISCUSSION GROUPS",
     require(bad not in privacy_ui, "Privacy Shield unrequested promo/claim remains: "+bad)
 require("btnJoinOfficialTelegram" not in privacy_code, "Privacy source click handler remains")
 require("Created and customized by: Tanim Boss" in identity_code, "Owner identity missing")
-require("Original code and license credit: Tech GPTx" in identity_code,
-        "Required original source UI credit missing")
+require("Owner: Tanim Boss" in identity_code and "Edition: jerry by Tanim Boss" in identity_code,
+        "Tanim Boss must be displayed as owner of jerry in primary App Identity dialog")
+require('fun licenseNotice(context: Context)' in identity_code,
+        "Original source license must remain accessible")
+require("Original source code by Tech GPTx / Rehaan" in identity_code,
+        "Original author credit must remain accessible in secondary license view")
+require("Original copyright: © 2026 Tech GPTx" in identity_code,
+        "Original code copyright is missing from legal attribution")
+primary_report = identity_code.split("fun report(context: Context): String {", 1)[1]
+require("Tech GPTx" not in primary_report and "Original source copyright" not in primary_report,
+        "Source author's name must not be mixed into default jerry ownership dialog")
+require("Original Source Credits" in settings_code and "licenseNotice(requireContext())" in settings_code,
+        "Settings must expose a separate original-source credits dialog")
 require('appendLine("Developer:' not in identity_code,
         "Old developer wrongly shown as creator of jerry")
 persona_layout=(root / "app/src/main/res/layout/activity_persona.xml").read_text()

@@ -1,10 +1,10 @@
-# jeery — Android AI Voice Assistant
+# jerry — Android AI Voice Assistant
 
-An **unofficial independent build** of the [Tech GPTx Android Assistant Part 7](https://github.com/techgptx/Playlist/tree/main/Part%207), using the personal assistant display name **jeery**. Original author and licensing information must stay intact.
+An **unofficial independent build** of the [Tech GPTx Android Assistant Part 7](https://github.com/techgptx/Playlist/tree/main/Part%207), using the personal assistant display name **jerry**. Original author and licensing information must stay intact.
 
 ## Android phone installation
 
-Open **Actions → Build jeery Android APK → Run workflow**. When a run succeeds, download the `jeery-android-apk` artifact and extract `jeery.apk`. Any successful build publishes a direct-download test APK to **Releases**.
+Open **Actions → Build jerry Android APK → Run workflow**. When a run succeeds, download the `jerry-android-apk` artifact and extract `jerry.apk`. Any successful build publishes a direct-download test APK to **Releases**.
 
 After installing, enter your own Gemini API key in Settings. Grant permissions individually and test microphone, wake word, accessibility automation and screen sharing on your phone.
 
@@ -15,6 +15,20 @@ Original attribution: © 2026 Tech GPTx / Rehaan. See the upstream [LICENSE](htt
 
 ## Direct APK link and source
 
-When the GitHub Actions run finishes successfully, open [Releases](https://github.com/tanimgaming31-ops/jeery-ai-assistant--2026-10-28/releases) and download **jeery.apk** from the newest test release. The complete adapted Android source is uploaded as the **jeery-source** artifact in the successful Actions run. Until then, no APK is claimed to be built or tested.
+When the GitHub Actions run finishes successfully, open [Releases](https://github.com/tanimgaming31-ops/jeery-ai-assistant--2026-10-28/releases) and download **jerry.apk** from the newest test release. The complete adapted Android source is uploaded as the **jeery-source** artifact in the successful Actions run. Until then, no APK is claimed to be built or tested.
 
 [Android phone feature checklist](TEST_CHECKLIST.md)
+
+## jerry UI and Tanim Boss ownership (2026-10-28)
+
+This is a **real Android XML/Kotlin change**, not a screenshot or visual mock-up.
+
+- The old wordmark image on Home and Hands-Free has been replaced by an editable text header **jerry**.
+- Promotional Telegram, Instagram and YouTube community links and creator-branding footer have been removed from the Settings and Hands-Free app screens.
+- Both screens now show the in-app **ABOUT ME — TANIM BOSS** card with Bangla and English information provided by the app owner.
+- The spoken AI instruction identifies the app as customized and named by **Tanim Boss**. For "Who made you?" it answers in the user's spoken language, including English and Bangla responses, while giving accurate original source attribution when specifically asked.
+- **Original developer's license and attribution remain preserved** in LICENSE, the source metadata and the App Identity & Integrity section, as required by the upstream source license.
+- **Same Android package ID** `ai.jeery.assistant` remains to avoid creating a second app; changing the display name does not change the package ID.
+- The new APK has to be built and independently phone-tested. Because GitHub Actions signs debug APKs with ephemeral keys, an existing installation may reject an in-place update even when package ID matches. **Back up personal data before uninstalling** any installed version.
+
+[New jerry Android Actions builds](https://github.com/tanimgaming31-ops/jeery-ai-assistant--2026-10-28/actions)

@@ -83,4 +83,6 @@ require('const val PERSONALITY_TECHGPT_X = "Tanim Boss Mode"' in models_source,
         "Creator persona is not labeled for Tanim Boss")
 require("You are jerry, the personalized AI assistant created for Tanim Boss." in prompt,
         "Old creator voice persona not replaced")
+require('("Pari")' not in prompt and '("Kabir")' not in prompt,
+        "Alternate named companion remains in jerry persona")
 print("SOURCE CHECKS PASSED: Jerry UI, Tanim Boss creator, original license, preserved functionality and APK identity")

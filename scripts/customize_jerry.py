@@ -211,6 +211,89 @@ def customize(root):
                  'appendLine("App customized by: Tanim Boss")\n            appendLine("Original source credit (license): Tech GPTx")\n            '+needle,1)
     patch_file(verifier,identity)
 
+    # I. Privacy Shield is also an actual Android screen; remove source author's
+    # social promotions, old embedded PNG logo and unsupported privacy guarantees.
+    privacy_layout = res / "layout/activity_privacy_shield.xml"
+    def privacy_screen(t):
+        logo = re.search(
+            r'<ImageView\s+android:layout_width="140dp"\s+android:layout_height="48dp"\s+android:src="@drawable/ic_jarvis_logo"[\s\S]*?/>',
+            t)
+        if logo is None:
+            raise RuntimeError("Privacy Shield old PNG logo missing")
+        new_logo = '''<TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:gravity="center"
+                    android:text="jerry"
+                    android:textColor="?attr/themeAccent"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:contentDescription="jerry AI Assistant" />'''
+        t = t[:logo.start()] + new_logo + t[logo.end():]
+        title = re.subn(r'android:text="System Authorized [^"]+"',
+                        'android:text="jerry — Created by Tanim Boss"',t,count=1)
+        if title[1]!=1:
+            raise RuntimeError("Privacy Shield unauthorized creator text missing")
+        t=title[0]
+        replacements={
+            "Zero-Backend • 100% On-Device Security": "Privacy and local data controls",
+            "100% PRIVATE • ZERO TRACKING": "YOUR PERMISSIONS • YOUR CONTROL",
+            "Your data is on your mobile.": "Local app data and cloud AI",
+            "Zero external server databases": "Local preferences and online conversations",
+            "In this app there is no backend, nothing. This is a process, totally local on your mobile and Gemini for your conversation. That&apos;s all. No owner added his database or any sign-up pages.":
+                "jerry keeps settings and app memory on your phone. When you use Gemini Live, voice and text are sent to Google for processing. With screen sharing enabled, selected screen content is also sent for AI analysis. Accessibility access is optional and can read or act on visible apps.",
+            "•  No Sign-Up, No Accounts, No Trackers":
+                "•  No separate jerry account is required",
+            "•  Voice Biometrics run 100% locally on-device":
+                "•  Optional local speaker matching is not biometric-grade authentication",
+            "•  Direct encrypted TLS 1.3 socket to Gemini Live":
+                "•  Gemini Live requires internet and transfers conversation data",
+            "TRANSPARENCY &amp; OPEN SOURCE": "APP INFORMATION &amp; PRIVACY",
+            "Open Source Coming Soon": "jerry — Customized by Tanim Boss",
+            "Full code transparency for the community":
+                "Personalized Android AI assistant",
+            "And in fact, it will be open source soon. Join if you want source code, Telegram discussion group, Instagram, YouTube. You will get a notification soon that it is open sourced.":
+                "This jerry Android app was customized by Tanim Boss using a third-party tutorial codebase. The original author and license are listed under App Identity &amp; Integrity and in the project LICENSE. No promotional community accounts are required.",
+        }
+        for old,new in replacements.items():
+            if old not in t:
+                raise RuntimeError("Privacy Shield statement missing: "+old)
+            t=t.replace(old,new)
+        return replace_section(t,
+            '            <!-- Section 3: Community & Source Code Discussion -->',
+            '\n        </LinearLayout>\n    </androidx.core.widget.NestedScrollView>',
+            CARD)
+    patch_file(privacy_layout,privacy_screen)
+
+    # Keep Back button, remove handlers for views deleted above.
+    privacy_java=java/"ui/settings/PrivacyShieldActivity.kt"
+    def privacy_handlers(t):
+        t=re.sub(r'\n        binding\.btnJoinOfficialTelegram\.setOnClickListener \{[\s\S]*?(?=\n    }\n\n    private fun openUrl)',
+                 '',t,count=1)
+        if "btnJoinOfficialTelegram" in t:
+            raise RuntimeError("Privacy social handlers still referenced")
+        t=re.sub(r'\n    private fun openUrl\(url: String\) \{[\s\S]*?\n    }\n(?=\})',
+                 '\n',t,count=1)
+        t=t.replace('import android.content.Intent\n','').replace('import android.net.Uri\n','')
+        return t
+    patch_file(privacy_java,privacy_handlers)
+
+    # Mandatory original license / UI attribution stays, but separate it
+    # from the personalized application's owner.
+    def revised_identity(t):
+        old='appendLine("App customized by: Tanim Boss")'
+        if old not in t:
+            raise RuntimeError("Identity dialog owner anchor missing")
+        t=t.replace(old,
+           'appendLine("App: jerry")\n            appendLine("Created and customized by: Tanim Boss")',1)
+        t=t.replace('Original source credit (license): Tech GPTx',
+                    'Original code and license credit: Tech GPTx')
+        t=re.sub(r'(?m)^\s*appendLine\("Developer:.*\n','',t,count=1)
+        t=t.replace('appendLine("Copyright: ', 'appendLine("Original source copyright: ')
+        return t
+    patch_file(verifier,revised_identity)
+
     print(f"Jerry Android source patch complete ({n} assistant name text files, home/UI/creator).")
 
 

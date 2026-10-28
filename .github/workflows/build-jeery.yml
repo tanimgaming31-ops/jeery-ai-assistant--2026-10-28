@@ -36,11 +36,10 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-
-      - name: Install required Android SDK 34
-        run: sdkmanager 'platforms;android-34' 'build-tools;34.0.0'
+      - name: Install Android SDK 34 from GitHub runner
+        run: |
+          echo "Android SDK: $ANDROID_HOME"
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'platforms;android-34' 'build-tools;34.0.0' || sdkmanager --install 'platforms;android-34' 'build-tools;34.0.0'
 
       - name: Compile jeery debug APK
         working-directory: build/jeery
@@ -87,7 +86,7 @@ jobs:
           retention-days: 14
 
       - name: Publish direct APK link to Releases (manual runs only)
-        if: github.event_name == 'workflow_dispatch'
+        if: success()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           RELEASE_TAG: jeery-test-${{ github.run_number }}

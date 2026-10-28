@@ -32,3 +32,18 @@ This is a **real Android XML/Kotlin change**, not a screenshot or visual mock-up
 - The new APK has to be built and independently phone-tested. Because GitHub Actions signs debug APKs with ephemeral keys, an existing installation may reject an in-place update even when package ID matches. **Back up personal data before uninstalling** any installed version.
 
 [New jerry Android Actions builds](https://github.com/tanimgaming31-ops/jeery-ai-assistant--2026-10-28/actions)
+
+## Privacy Shield and ownership cleanup
+
+The application's **real Android Privacy & Data Shield** screen is changed:
+- Its image-based former wordmark is replaced with the editable **jerry** header.
+- The hero identifies the personal app as **Created by Tanim Boss**.
+- The former author's Telegram, Instagram, YouTube and community promotions are removed.
+- The incorrect promises of "100% PRIVATE", "ZERO TRACKING" and "Open Source Coming Soon" are replaced with accurate notes about local memory, permissions and Gemini cloud processing.
+- **ABOUT ME — TANIM BOSS** is included on the Privacy Shield as well as Settings and Hands-Free pages.
+- All named voice personalities remain **jerry**, including affectionate and encouraging conversation styles.
+- The App Identity dialog primarily identifies **jerry**, created/customized by **Tanim Boss**. Its distinct **Original source/license credit** remains because the original TAMCL license explicitly prohibits removing author attribution from UI credits.
+- Kotlin internal file/class identifiers and the Android app ID remain unchanged to preserve functionality.
+
+**Android signing note:** Each GitHub Actions debug APK may use a different signature. Before uninstalling a previous build, export important memories/settings where possible, because uninstalling deletes local app data. A different signing key generally prevents an in-place update.
+

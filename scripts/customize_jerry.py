@@ -423,6 +423,55 @@ def customize(root):
         return t
     patch_file(auth_xml, auth_brand)
 
+    # M. Remove the entire optional App Identity & Integrity menu item from
+    # the actual Settings XML and the click handler. No visual-only hiding.
+    # Keep legally required attribution on the existing Privacy Shield page.
+    def remove_identity_row(t):
+        needle='                <LinearLayout\n                    android:id="@+id/rowAppIdentity"'
+        pos=t.find(needle)
+        if pos<0:
+            raise RuntimeError("App Identity menu row not found")
+        divider=t.rfind('                <View\n',0,pos)
+        if divider<0 or pos-divider>320:
+            raise RuntimeError("Identity row preceding divider not located")
+        end_marker='\n                </LinearLayout>'
+        end=t.find(end_marker,pos)
+        if end<0:
+            raise RuntimeError("Identity row closing layout not found")
+        t=t[:divider]+t[end+len(end_marker):]
+        if 'rowAppIdentity' in t or 'App Identity &amp; Integrity' in t:
+            raise RuntimeError("Identity menu still present")
+        return t
+    patch_file(settings,remove_identity_row)
+
+    def remove_identity_click(t):
+        needle='        binding.rowAppIdentity.setOnClickListener {'
+        pos=t.find(needle)
+        if pos<0:
+            raise RuntimeError("Identity click listener not found")
+        end=t.find('\n        }',pos)
+        if end<0:
+            raise RuntimeError("Identity click listener ending not found")
+        t=t[:pos]+t[end+len('\n        }'):]
+        if 'rowAppIdentity' in t or '.licenseNotice(requireContext())' in t:
+            raise RuntimeError("Identity dialog handler still accessible")
+        return t
+    patch_file(sf,remove_identity_click)
+
+    # UI source attribution cannot be deleted under the upstream TAMCL license,
+    # but it belongs to privacy/legal explanation, NOT a main Settings feature.
+    def privacy_source_credit(t):
+        old=('This jerry Android app was customized by Tanim Boss using a third-party tutorial codebase. '
+             'The original author and license are listed under App Identity &amp; Integrity '
+             'and in the project LICENSE. No promotional community accounts are required.')
+        new=('jerry was customized by Tanim Boss. Original Android source code by Tech GPTx / Rehaan. '
+             'Original license: TAMCL v1.0. Source: github.com/techgptx/Playlist. '
+             'No promotional community accounts are required.')
+        if old not in t:
+            raise RuntimeError("Old Privacy Shield legal statement missing")
+        return t.replace(old,new,1)
+    patch_file(privacy_layout,privacy_source_credit)
+
     print(f"Jerry Android source patch complete ({n} assistant name text files, home/UI/creator).")
 
 

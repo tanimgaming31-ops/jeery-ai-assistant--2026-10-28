@@ -64,7 +64,7 @@ require('android:text="jerry"' in privacy_ui, "Privacy Shield still shows old pi
 require('@drawable/ic_jarvis_logo' not in privacy_ui, "Privacy Shield still displays original author logo")
 require("jerry — Created by Tanim Boss" in privacy_ui, "Owner missing from Privacy Shield")
 require("@string/jerry_about_heading" in privacy_ui, "Tanim About Me card missing")
-for bad in ("TechGPT X", "Tech GPTx", "COMMUNITY &amp; DISCUSSION GROUPS",
+for bad in ("TechGPT X", "COMMUNITY &amp; DISCUSSION GROUPS",
             "btnJoinOfficialTelegram", "btnJoinInstagram", "btnJoinYoutube",
             "Open Source Coming Soon", "100% PRIVATE", "ZERO TRACKING"):
     require(bad not in privacy_ui, "Privacy Shield unrequested promo/claim remains: "+bad)
@@ -81,8 +81,17 @@ require("Original copyright: © 2026 Tech GPTx" in identity_code,
 primary_report = identity_code.split("fun report(context: Context): String {", 1)[1]
 require("Tech GPTx" not in primary_report and "Original source copyright" not in primary_report,
         "Source author's name must not be mixed into default jerry ownership dialog")
-require("Original Source Credits" in settings_code and "licenseNotice(requireContext())" in settings_code,
-        "Settings must expose a separate original-source credits dialog")
+require('rowAppIdentity' not in settings_ui and 'rowAppIdentity' not in settings_code,
+        "App Identity & Integrity menu and click handler must be fully removed")
+require('App Identity &amp; Integrity' not in settings_ui,
+        "Old identity menu text remains in Settings")
+require('licenseNotice(requireContext())' not in settings_code,
+        "Old source-credit popup must not be accessible from Settings menu")
+require('rowPrivacyPolicy' in settings_ui and 'rowPermissions' in settings_ui,
+        "Other Settings features must remain available")
+require('Original Android source code by Tech GPTx / Rehaan' in privacy_ui,
+        "Legal original source UI attribution must remain in Privacy Shield")
+require('TAMCL v1.0' in privacy_ui, "Original source license not disclosed in app UI")
 require('appendLine("Developer:' not in identity_code,
         "Old developer wrongly shown as creator of jerry")
 persona_layout=(root / "app/src/main/res/layout/activity_persona.xml").read_text()

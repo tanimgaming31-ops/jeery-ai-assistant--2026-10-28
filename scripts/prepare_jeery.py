@@ -30,7 +30,9 @@ def fetch_part7(destination):
         lic = next((p for p in names if p.endswith("/LICENSE") and p.count("/") == 1), None)
         if not lic:
             raise RuntimeError("Upstream license missing; build refused")
-        (destination / "LICENSE").write_bytes(zipped.read(lic))
+        third_party = destination / "THIRD_PARTY_LICENSES/techgptx-playlist-LICENSE.txt"
+        third_party.parent.mkdir(parents=True, exist_ok=True)
+        third_party.write_bytes(zipped.read(lic))
         count = 0
         for member in zipped.infolist():
             if member.is_dir() or "/Part 7/" not in member.filename:
@@ -49,7 +51,7 @@ def fetch_part7(destination):
 
 
 def replace_text(text, path):
-    if path.name == "LICENSE" or "docs" in path.parts:
+    if path.name == "LICENSE" or path.name.startswith("LICENSE-") or "THIRD_PARTY_LICENSES" in path.parts or "docs" in path.parts:
         return text
     if path.name == "DeveloperInfo.kt":
         # Preserve original copyright and source credit; fix app identity.
@@ -131,11 +133,19 @@ def replace_text(text, path):
 def prepare(out):
     out.mkdir(parents=True, exist_ok=True)
     fetch_part7(out)
-    # Keep both notices in the downloadable complete Android source tree.
-    # The original third-party LICENSE must remain untouched.
-    tanim_notice = Path(__file__).resolve().parent.parent / "LICENSE-TANIM-BOSS.md"
-    if not tanim_notice.is_file():
-        raise RuntimeError("Tanim Boss contributions notice is missing from repository")
+    # The root LICENSE belongs to the jerry project contributions.
+    # The upstream license remains byte-for-byte unchanged in THIRD_PARTY_LICENSES.
+    repository = Path(__file__).resolve().parent.parent
+    own_license = repository / "LICENSE"
+    tanim_notice = repository / "LICENSE-TANIM-BOSS.md"
+    upstream_copy = repository / "THIRD_PARTY_LICENSES/techgptx-playlist-LICENSE.txt"
+    upstream_download = out / "THIRD_PARTY_LICENSES/techgptx-playlist-LICENSE.txt"
+    for source in (own_license, tanim_notice, upstream_copy):
+        if not source.is_file():
+            raise RuntimeError("Missing required project license: " + str(source))
+    if upstream_download.read_bytes() != upstream_copy.read_bytes():
+        raise RuntimeError("Pinned upstream license differs from preserved original; build refused")
+    shutil.copyfile(own_license, out / "LICENSE")
     shutil.copyfile(tanim_notice, out / "LICENSE-TANIM-BOSS.md")
     edits = 0
     for path in out.rglob("*"):

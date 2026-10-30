@@ -16,7 +16,7 @@
 | Voice screenshot saved to gallery | Implemented API 30+ with accessibility permission | Not yet tested |
 | WhatsApp share draft | Implemented via supported Android share intent | Not yet tested |
 | WhatsApp/IMO/Messenger contact lookup and auto-send | Not implemented | Not tested |
-| Notification read and approved quick reply | Not implemented | Not tested |
+| Notification read and approved quick reply | Implemented using optional Android notification listener and per-message confirmation; supported notifications only | Not yet tested on phone |
 | Basic notifications/reminders | Implemented; not guaranteed exact timing | Not yet tested |
 | Background media, multi-app routines, macros | Not implemented | Not tested |
 | Screenshot AI vision, PDF reading, OCR | Not implemented | Not tested |

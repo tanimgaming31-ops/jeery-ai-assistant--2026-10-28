@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">jerry Independent</string>
+    <string name="app_name">jerry Preview - TaNiM world</string>
     <string name="service_description">Optional voice-controlled back, home and screenshot actions. Enable only when desired.</string>
 </resources>

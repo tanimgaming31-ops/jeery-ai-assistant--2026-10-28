@@ -46,6 +46,7 @@ public final class MainActivity extends Activity {
     private static final int LIVE_AUDIO_REQUEST = 107;
     private static final int SCAN_QR = 108;
     private static final int OFFLINE_OCR = 109;
+    private static final int BACKGROUND_LIVE_REQUEST = 110;
     private static final int BG = Color.rgb(12, 10, 25);
     private static final int PURPLE = Color.rgb(139, 92, 246);
 
@@ -120,6 +121,12 @@ public final class MainActivity extends Activity {
         area.addView(button("Start Gemini Live audio call", this::startLive));
         area.addView(button("End Gemini Live call", () -> {
             if (live != null) live.stop();
+        }));
+        area.addView(button("Start background Gemini Live (visible notification)",
+                this::startLiveBackground));
+        area.addView(button("Stop background Gemini Live", () -> {
+            stopService(new Intent(this, LiveVoiceForegroundService.class));
+            show("Requested background Live microphone service to stop.", false);
         }));
         area.addView(button("Set / Replace Gemini API key", this::configureKey));
         area.addView(button("Analyze selected photo / screenshot", () -> chooseDocument(false)));
@@ -283,6 +290,30 @@ public final class MainActivity extends Activity {
                     }
                 }).show();
     }
+    private void startLiveBackground() {
+        String key = settings.getString("gemini_key", "");
+        if (key.isEmpty()) {
+            show("Save your own Gemini API key first.", false);
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 23 &&
+                checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                        != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO},
+                    BACKGROUND_LIVE_REQUEST);
+            return;
+        }
+        try {
+            if (live != null && live.isActive()) live.stop();
+            Intent start = new Intent(this, LiveVoiceForegroundService.class)
+                    .setAction(LiveVoiceForegroundService.ACTION_START);
+            startForegroundService(start); // User-visible Activity and explicit tap.
+            show("Starting background Live call. Android will display a microphone notification "
+                    + "with a Stop action.", false);
+        } catch (Exception ex) {
+            show("Android denied background Live call: " + ex.getMessage(), false);
+        }
+    }
     private void startLive() {
         String key = settings.getString("gemini_key", "");
         if (key.isEmpty()) {
@@ -295,10 +326,18 @@ public final class MainActivity extends Activity {
             return;
         }
         if (voice != null) voice.stop();
+        if (LiveVoiceForegroundService.isRunning()) {
+            stopService(new Intent(this, LiveVoiceForegroundService.class));
+        }
         live.start(key);
     }
     @Override public void onRequestPermissionsResult(int code, String[] perms, int[] grants) {
         super.onRequestPermissionsResult(code, perms, grants);
+        if (code == BACKGROUND_LIVE_REQUEST) {
+            if (grants.length > 0 && grants[0] == PackageManager.PERMISSION_GRANTED)
+                startLiveBackground();
+            else show("Microphone permission declined; background call not started.", false);
+        }
         if (code == LIVE_AUDIO_REQUEST) {
             if (grants.length > 0 && grants[0] == PackageManager.PERMISSION_GRANTED)
                 startLive();

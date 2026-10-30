@@ -4,9 +4,9 @@
 
 **Primary jerry project license:** [LICENSE — Tanim Boss](LICENSE)  
 **Tanim Boss original-contributions notice:** [LICENSE-TANIM-BOSS.md](LICENSE-TANIM-BOSS.md)  
-**Unchanged original upstream source license:** [THIRD_PARTY_LICENSES/techgptx-playlist-LICENSE.txt](THIRD_PARTY_LICENSES/techgptx-playlist-LICENSE.txt)
+**Original upstream source terms:** Reproduced verbatim in [LICENSE, Section 6](LICENSE) (no separate third-party license folder)
 
-The main LICENSE displays Tanim Boss as the owner of original jerry contributions. The upstream Android source license is preserved unmodified in THIRD_PARTY_LICENSES, and applies to the original code. This project-wide reorganization changes license files and documentation only, not the app's functions.
+The main LICENSE identifies Tanim Boss as the owner of original jerry contributions. The upstream Android source license is reproduced verbatim in Section 6 of that same LICENSE, and still applies to its original code. No separate third-party license folder is needed. This reorganization changes licensing and build packaging only, not the app's functionality.
 
 
 An **unofficial independent build** of the [Tech GPTx Android Assistant Part 7](https://github.com/techgptx/Playlist/tree/main/Part%207), using the personal assistant display name **jerry**. Original author and licensing information must stay intact.
@@ -19,7 +19,7 @@ After installing, enter your own Gemini API key in Settings. Grant permissions i
 
 **Status:** Build preparation; a successful GitHub Actions build only demonstrates compilation, not guaranteed phone behavior. WhatsApp send, YouTube autoplay, background voice and AI model availability require device tests. No existing Maya, Zoya or other personal assistant project is modified.
 
-Original attribution: © 2026 Tech GPTx / Rehaan. See the original license in [THIRD_PARTY_LICENSES](THIRD_PARTY_LICENSES/techgptx-playlist-LICENSE.txt), preserved verbatim in the derived source. This repository is **not** an official Tech GPTx distribution.
+Original attribution: © 2026 Tech GPTx / Rehaan. See the original license reproduced verbatim in [LICENSE, Section 6](LICENSE). This repository is **not** an official Tech GPTx distribution.
 
 
 ## Direct APK link and source
@@ -36,7 +36,7 @@ This is a **real Android XML/Kotlin change**, not a screenshot or visual mock-up
 - Promotional Telegram, Instagram and YouTube community links and creator-branding footer have been removed from the Settings and Hands-Free app screens.
 - Both screens now show the in-app **ABOUT ME — TANIM BOSS** card with Bangla and English information provided by the app owner.
 - The spoken AI instruction identifies the app as customized and named by **Tanim Boss**. For "Who made you?" it answers in the user's spoken language, including English and Bangla responses, while giving accurate original source attribution when specifically asked.
-- **Original source license and attribution remain preserved** in THIRD_PARTY_LICENSES, source metadata and Privacy & Data Shield legal text, as required by the upstream source license.
+- **Original source license and attribution remain preserved** in the main LICENSE (Section 6), source metadata and Privacy & Data Shield legal text, as required by the upstream source license.
 - **Same Android package ID** `ai.jeery.assistant` remains to avoid creating a second app; changing the display name does not change the package ID.
 - The new APK has to be built and independently phone-tested. Because GitHub Actions signs debug APKs with ephemeral keys, an existing installation may reject an in-place update even when package ID matches. **Back up personal data before uninstalling** any installed version.
 

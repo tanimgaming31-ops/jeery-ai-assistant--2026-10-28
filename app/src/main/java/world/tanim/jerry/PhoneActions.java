@@ -104,6 +104,18 @@ public final class PhoneActions {
                         AudioManager.FLAG_SHOW_UI);
                 return "Media volume updated.";
             }
+            if (low.startsWith("tap ") && low.length() > 4) {
+                return JerryAccessibilityService.tapText(text.substring(4).trim());
+            }
+            if (low.startsWith("type ") && low.length() > 5) {
+                return JerryAccessibilityService.typeIntoFocusedInput(text.substring(5));
+            }
+            if (low.equals("swipe up") || low.equals("scroll down")) {
+                return JerryAccessibilityService.swipe(true);
+            }
+            if (low.equals("swipe down") || low.equals("scroll up")) {
+                return JerryAccessibilityService.swipe(false);
+            }
             if (low.equals("open camera")) {
                 activity.startActivity(new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA));
                 return "Opening camera.";

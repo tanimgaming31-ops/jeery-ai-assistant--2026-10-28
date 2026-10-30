@@ -533,20 +533,25 @@ public final class MainActivity extends Activity {
     }
 
     private void showCommands() {
-        show("COMMANDS\n\nopen WhatsApp / open YouTube / open Camera\n"
+        show("COMMANDS\n\n"
+                + "open WhatsApp / open YouTube / open Camera\n"
                 + "open Instagram / open [installed app name]\n"
-                + "youtube search cute cats\nsearch weather in Dubai\n"
-                + "torch on / torch off\nvolume up / volume down\n"
-                + "back / go home / take screenshot\n"\n                + "tap Settings / type hello / scroll down / swipe up\\n"\n                + "brightness 40% / volume 30% / call Khalid (dialer only)\\n"
+                + "youtube search cute cats / search weather in Dubai\n"
+                + "torch on / torch off\n"
+                + "volume up / volume down / volume 30%\n"
+                + "brightness 40% (needs Android modify-settings permission)\n"
+                + "call [contact name] (opens dialer; you press Call)\n"
+                + "back / go home / take screenshot\n"
+                + "tap Settings / type hello / scroll down / swipe up\n"
                 + "whatsapp message Hello there (draft only)\n"
-                + "read notifications\nreply latest notification Hello (confirm before sending)\n"
-                + "Use buttons to analyze a photo, screenshot or PDF (Gemini consent required)\n"
-                + "remember that I like Bengali\nwhat do you remember\n"
+                + "read notifications\n"
+                + "reply latest notification Hello (confirm before sending)\n"
+                + "choose a photo, PDF, QR/barcode or OCR file using buttons\n"
+                + "remember that I like Bengali / what do you remember\n"
                 + "remind me in 10 minutes to drink water\n"
                 + "remind me in 2 hours to take a break\n\n"
-                + "A Gemini key is needed for general conversational questions. "
-                + "These commands may require device permissions. Other features "
-                + "from the previous jerry app are not yet available.", false);
+                + "General chat needs a Gemini key; Android actions need permissions. "
+                + "Some previous app features are still being rebuilt independently.", false);
     }
     private void show(String message, boolean say) {
         status.setText("jerry • " + (say ? "Ready" : "Info"));

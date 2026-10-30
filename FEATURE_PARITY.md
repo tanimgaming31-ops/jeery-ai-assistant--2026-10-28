@@ -19,7 +19,8 @@
 | Notification read and approved quick reply | Implemented using optional Android notification listener and per-message confirmation; supported notifications only | Not yet tested on phone |
 | Basic notifications/reminders | Implemented; not guaranteed exact timing | Not yet tested |
 | Background media, multi-app routines, macros | Not implemented | Not tested |
-| Screenshot AI vision, PDF reading, OCR | Not implemented | Not tested |
+| User-selected image/screenshot analysis and PDF reading | Implemented via Gemini; requires file picker consent; PDFs limited to first 3 pages | Not yet tested on phone |
+| Live screen AI vision and automatic OCR/document scanning | Not implemented | Not tested |
 | 3D avatar / lip sync / emotion engine | Not implemented | Not tested |
 | Security camera / face recognition | Not implemented | Not tested |
 | Smart home, router, advanced file manager | Not implemented | Not tested |

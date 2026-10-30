@@ -20,9 +20,10 @@ represented as implemented unless code for it exists here and tests confirm it.
   accessibility service on supported Android versions
 - Android local reminder notifications (notification permission required)
 - Opt-in Android notification reading and per-message confirmation for supported quick replies
+- User-selected screenshot/photo AI reading and PDF vision for the first 3 pages (explicit consent, Gemini API key required)
 
 ## Not implemented or not feature-parity verified
-Continuous hands-free wake-word, Gemini Live audio-to-audio, screen-reading AI,
+Continuous hands-free wake-word, Gemini Live audio-to-audio, continuous screen-reading AI,
 contact-by-name WhatsApp/IMO/Messenger auto-send, cloned-app launching,
 automated YouTube playback, smart-home/router actions, OCR/document scan,
 offline understanding, complex macros and routines, 3D/avatar lip sync,

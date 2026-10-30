@@ -14,7 +14,7 @@ concurrency:
   group: independent-jerry-${{ github.ref }}
   cancel-in-progress: true
 permissions:
-  contents: read
+  contents: write
 jobs:
   android:
     runs-on: ubuntu-latest
@@ -44,3 +44,27 @@ jobs:
           name: jerry-independent-preview-apk
           path: app/build/outputs/apk/debug/app-debug.apk
           retention-days: 14
+
+      - name: Prepare direct downloadable APK
+        run: |
+          mkdir -p dist
+          cp app/build/outputs/apk/debug/app-debug.apk dist/jerry-independent.apk
+          sha256sum dist/jerry-independent.apk > dist/sha256.txt
+
+      - name: Publish independent test APK to GitHub Releases
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: jerry-independent-test-${{ github.run_number }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/jerry-independent.apk dist/sha256.txt \
+            --title "jerry Independent Android Preview #${{ github.run_number }}" \
+            --target "$GITHUB_SHA" \
+            --notes "Independent-source jerry preview by Tanim Boss, separate Android package. Compilation passed, but full feature parity and target phone functionality are not verified. The earlier jerry app remains unchanged. Test only; do not uninstall your working app." \
+            --prerelease
+
+      - name: Direct APK link
+        if: success()
+        run: |
+          echo "## Direct jerry-independent.apk" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://github.com/${{ github.repository }}/releases/download/jerry-independent-test-${{ github.run_number }}/jerry-independent.apk" >> "$GITHUB_STEP_SUMMARY"

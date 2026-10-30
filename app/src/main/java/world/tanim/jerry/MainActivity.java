@@ -3,6 +3,10 @@ package world.tanim.jerry;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.database.Cursor;
+import android.provider.OpenableColumns;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -47,6 +51,7 @@ public final class MainActivity extends Activity {
     private static final int SCAN_QR = 108;
     private static final int OFFLINE_OCR = 109;
     private static final int BACKGROUND_LIVE_REQUEST = 110;
+    private static final int PICK_FILE = 111;
     private static final int BG = Color.rgb(12, 10, 25);
     private static final int PURPLE = Color.rgb(139, 92, 246);
 
@@ -133,6 +138,9 @@ public final class MainActivity extends Activity {
         area.addView(button("Read PDF (first 3 pages)", () -> chooseDocument(true)));
         area.addView(button("Scan QR / barcode from image (offline)", () -> chooseLocalVision(SCAN_QR)));
         area.addView(button("Read printed text from image (offline)", () -> chooseLocalVision(OFFLINE_OCR)));
+        area.addView(button("Copy last jerry response", this::copyAnswer));
+        area.addView(button("Paste clipboard into command", this::pasteClipboard));
+        area.addView(button("Open a document with Android file picker", this::chooseAnyFile));
         area.addView(button("My saved memories", () -> show(memory.summary(), false)));
         area.addView(button("Export memory JSON", this::exportMemory));
         area.addView(button("Import memory JSON", this::importMemory));
@@ -356,6 +364,33 @@ public final class MainActivity extends Activity {
             show("Android speech recognition is unavailable: " + ex.getMessage(), false);
         }
     }
+    private void copyAnswer() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        if (clipboard == null) {
+            show("Android clipboard unavailable.", false);
+            return;
+        }
+        clipboard.setPrimaryClip(ClipData.newPlainText("jerry reply", answer.getText()));
+        show("jerry reply copied to Android clipboard.", false);
+    }
+    private void pasteClipboard() {
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        if (clipboard == null || !clipboard.hasPrimaryClip()) {
+            show("Clipboard is empty or unavailable.", false);
+            return;
+        }
+        ClipData clip = clipboard.getPrimaryClip();
+        if (clip == null || clip.getItemCount() == 0) return;
+        CharSequence text = clip.getItemAt(0).coerceToText(this);
+        question.setText(text == null ? "" : text.toString());
+        show("Clipboard text pasted into command box. Review before sending.", false);
+    }
+    private void chooseAnyFile() {
+        Intent picker = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        picker.addCategory(Intent.CATEGORY_OPENABLE);
+        picker.setType("*/*");
+        startActivityForResult(picker, PICK_FILE);
+    }
     private void chooseLocalVision(int mode) {
         Intent picker = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         picker.addCategory(Intent.CATEGORY_OPENABLE);
@@ -401,6 +436,33 @@ public final class MainActivity extends Activity {
         }
         Uri uri = data.getData();
         if (uri == null) return;
+        if (requestCode == PICK_FILE) {
+            String name = "Selected document";
+            try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+                if (cursor != null && cursor.moveToFirst()) {
+                    int column = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    if (column >= 0) name = cursor.getString(column);
+                }
+            } catch (Exception ignored) { }
+            final String label = name;
+            final Uri selected = uri;
+            new AlertDialog.Builder(this)
+                .setTitle("Selected file: " + label)
+                .setMessage("Android's file manager granted access to this chosen file only. "
+                    + "Open it with a compatible installed app? The file is not uploaded to jerry.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Open", (d, w) -> {
+                    try {
+                        Intent open = new Intent(Intent.ACTION_VIEW, selected);
+                        open.setDataAndType(selected, getContentResolver().getType(selected));
+                        open.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(Intent.createChooser(open, "Open selected file"));
+                    } catch (Exception ex) {
+                        show("No compatible app to open selected file: " + ex.getMessage(), false);
+                    }
+                }).show();
+            return;
+        }
         if (requestCode == SCAN_QR) {
             LocalVisionTools.scanBarcode(this, uri,
                 (message, success) -> runOnUiThread(() -> show(message, false)));

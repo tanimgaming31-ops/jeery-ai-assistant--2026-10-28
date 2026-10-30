@@ -10,6 +10,9 @@ on:
       - 'settings.gradle.kts'
       - 'gradle.properties'
       - '.github/workflows/independent-android.yml'
+concurrency:
+  group: independent-jerry-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

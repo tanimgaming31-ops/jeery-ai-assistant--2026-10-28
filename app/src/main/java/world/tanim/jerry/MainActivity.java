@@ -93,7 +93,7 @@ public final class MainActivity extends Activity {
         scroll.addView(area);
         TextView brand = label("jerry", 36, PURPLE, true);
         area.addView(brand);
-        area.addView(label("AI Assistant  •  Tanim Boss", 15, 0xffcfbeff, false));
+        area.addView(label("AI Assistant  •  TaNiM world (Tanim Boss)", 15, 0xffcfbeff, false));
         area.addView(label("Independent preview • Main app is untouched", 12, 0xff9e9bb9, false));
 
         status = label("Ready. Enter your Gemini API key to start.", 14, 0xffc4badc, false);

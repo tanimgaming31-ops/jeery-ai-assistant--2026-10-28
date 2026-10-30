@@ -43,12 +43,14 @@ public final class MainActivity extends Activity {
     private static final int NOTIFY_REQUEST = 103;
     private static final int CHOOSE_IMAGE = 105;
     private static final int CHOOSE_PDF = 106;
+    private static final int LIVE_AUDIO_REQUEST = 107;
     private static final int BG = Color.rgb(12, 10, 25);
     private static final int PURPLE = Color.rgb(139, 92, 246);
 
     private SharedPreferences settings;
     private MemoryStore memory;
     private TextToSpeech voice;
+    private LiveVoiceSession live;
     private TextView status;
     private TextView answer;
     private EditText question;
@@ -59,6 +61,14 @@ public final class MainActivity extends Activity {
         getWindow().setNavigationBarColor(BG);
         settings = getSharedPreferences("jerry_independent_settings", MODE_PRIVATE);
         memory = new MemoryStore(this);
+        live = new LiveVoiceSession(this, new LiveVoiceSession.Listener() {
+            @Override public void onStatus(String message) {
+                if (status != null) status.setText(message);
+            }
+            @Override public void onTranscript(String who, String message) {
+                if (answer != null) answer.setText(who + ": " + message);
+            }
+        });
         buildInterface();
         voice = new TextToSpeech(this, code -> {
             if (code == TextToSpeech.SUCCESS && voice != null)
@@ -105,6 +115,10 @@ public final class MainActivity extends Activity {
         area.addView(question, new LinearLayout.LayoutParams(-1, -2));
         area.addView(button("Send / Run command", () -> send(question.getText().toString())));
         area.addView(button("Speak to jerry (push to talk)", this::recognize));
+        area.addView(button("Start Gemini Live audio call", this::startLive));
+        area.addView(button("End Gemini Live call", () -> {
+            if (live != null) live.stop();
+        }));
         area.addView(button("Set / Replace Gemini API key", this::configureKey));
         area.addView(button("Analyze selected photo / screenshot", () -> chooseDocument(false)));
         area.addView(button("Read PDF (first 3 pages)", () -> chooseDocument(true)));
@@ -265,6 +279,28 @@ public final class MainActivity extends Activity {
                     }
                 }).show();
     }
+    private void startLive() {
+        String key = settings.getString("gemini_key", "");
+        if (key.isEmpty()) {
+            show("Set your Gemini API key first to start Live voice.", false);
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 23 && checkSelfPermission(Manifest.permission.RECORD_AUDIO)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, LIVE_AUDIO_REQUEST);
+            return;
+        }
+        if (voice != null) voice.stop();
+        live.start(key);
+    }
+    @Override public void onRequestPermissionsResult(int code, String[] perms, int[] grants) {
+        super.onRequestPermissionsResult(code, perms, grants);
+        if (code == LIVE_AUDIO_REQUEST) {
+            if (grants.length > 0 && grants[0] == PackageManager.PERMISSION_GRANTED)
+                startLive();
+            else show("Microphone permission declined. Live audio will not start.", false);
+        }
+    }
     private void recognize() {
         try {
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -390,7 +426,8 @@ public final class MainActivity extends Activity {
     private void show(String message, boolean say) {
         status.setText("jerry • " + (say ? "Ready" : "Info"));
         answer.setText(message);
-        if (say && voice != null && message.length() < 2000) {
+        if (say && voice != null && (live == null || !live.isActive())
+                && message.length() < 2000) {
             voice.speak(message, TextToSpeech.QUEUE_FLUSH, null, "jerry-reply");
         }
     }
@@ -426,6 +463,7 @@ public final class MainActivity extends Activity {
         return Math.round(getResources().getDisplayMetrics().density * n);
     }
     @Override protected void onDestroy() {
+        if (live != null) live.close();
         if (voice != null) voice.shutdown();
         super.onDestroy();
     }

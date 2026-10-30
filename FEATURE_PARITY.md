@@ -11,8 +11,11 @@
 | Installed-app search and launch | Implemented, launcher apps only | Not yet tested |
 | YouTube search in browser/app | Implemented external search | Not yet tested |
 | YouTube automatic video playback | Not implemented | Not tested |
-| Camera open / flashlight / media volume | Implemented with permission checks | Not yet tested |
+| Camera open / flashlight / media volume | Implemented with permission checks, including numeric media volume percent | Not yet tested |
+| Brightness percentage | Implemented with WRITE_SETTINGS special permission | Not yet tested |
+| Dial contact by saved name | READ_CONTACTS lookup and Android Dialer chooser (no auto-calling) implemented | Not yet tested |
 | Back / home voice actions | Implemented with user-enabled accessibility | Not yet tested |
+| Voice tap on visible label / swipe / focused-field typing | Implemented with opt-in Accessibility service; no automatic message send | Not yet tested on phone |
 | Voice screenshot saved to gallery | Implemented API 30+ with accessibility permission | Not yet tested |
 | WhatsApp share draft | Implemented via supported Android share intent | Not yet tested |
 | WhatsApp/IMO/Messenger contact lookup and auto-send | Not implemented | Not tested |
@@ -20,7 +23,10 @@
 | Basic notifications/reminders | Implemented; not guaranteed exact timing | Not yet tested |
 | Background media, multi-app routines, macros | Not implemented | Not tested |
 | User-selected image/screenshot analysis and PDF reading | Implemented via Gemini; requires file picker consent; PDFs limited to first 3 pages | Not yet tested on phone |
-| Live screen AI vision and automatic OCR/document scanning | Not implemented | Not tested |
+| Live screen AI vision and automatic OCR/document scanning | Not implemented; user-selected image/PDF only | Not tested |
+| Floating avatar and voice-controlled overlay | Not implemented | Not tested |
+| YouTube select-and-autoplay | Not implemented; results search only | Not tested |
+| Exact-preserved old screens and brand assets | Not implemented; new original UI is different | Not tested |
 | QR / barcode scanner | Offline ML Kit scanner for user-selected images implemented | Compile and phone test pending |
 | OCR from images | Offline ML Kit Latin-text reader for selected images implemented | Compile and phone test pending |
 | File manager / clipboard | Android SAF open file, copy response, paste text implemented | Compile and phone test pending |

@@ -19,13 +19,14 @@ represented as implemented unless code for it exists here and tests confirm it.
 - Voice commands for back/home and a screenshot using an explicitly enabled
   accessibility service on supported Android versions
 - Android local reminder notifications (notification permission required)
+- Opt-in Android notification reading and per-message confirmation for supported quick replies
 
 ## Not implemented or not feature-parity verified
 Continuous hands-free wake-word, Gemini Live audio-to-audio, screen-reading AI,
 contact-by-name WhatsApp/IMO/Messenger auto-send, cloned-app launching,
 automated YouTube playback, smart-home/router actions, OCR/document scan,
 offline understanding, complex macros and routines, 3D/avatar lip sync,
-advanced notification quick reply, and full background conversation.
+full background conversation.
 See FEATURE_PARITY.md. **Do not replace the main app until these have been
 independently reimplemented and tested on the target phone.**
 

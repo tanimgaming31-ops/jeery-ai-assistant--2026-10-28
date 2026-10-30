@@ -44,6 +44,8 @@ public final class MainActivity extends Activity {
     private static final int CHOOSE_IMAGE = 105;
     private static final int CHOOSE_PDF = 106;
     private static final int LIVE_AUDIO_REQUEST = 107;
+    private static final int SCAN_QR = 108;
+    private static final int OFFLINE_OCR = 109;
     private static final int BG = Color.rgb(12, 10, 25);
     private static final int PURPLE = Color.rgb(139, 92, 246);
 
@@ -122,6 +124,8 @@ public final class MainActivity extends Activity {
         area.addView(button("Set / Replace Gemini API key", this::configureKey));
         area.addView(button("Analyze selected photo / screenshot", () -> chooseDocument(false)));
         area.addView(button("Read PDF (first 3 pages)", () -> chooseDocument(true)));
+        area.addView(button("Scan QR / barcode from image (offline)", () -> chooseLocalVision(SCAN_QR)));
+        area.addView(button("Read printed text from image (offline)", () -> chooseLocalVision(OFFLINE_OCR)));
         area.addView(button("My saved memories", () -> show(memory.summary(), false)));
         area.addView(button("Export memory JSON", this::exportMemory));
         area.addView(button("Import memory JSON", this::importMemory));
@@ -313,6 +317,16 @@ public final class MainActivity extends Activity {
             show("Android speech recognition is unavailable: " + ex.getMessage(), false);
         }
     }
+    private void chooseLocalVision(int mode) {
+        Intent picker = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        picker.addCategory(Intent.CATEGORY_OPENABLE);
+        picker.setType("image/*");
+        try {
+            startActivityForResult(picker, mode);
+        } catch (Exception ex) {
+            show("Cannot open image chooser: " + ex.getMessage(), false);
+        }
+    }
     private void chooseDocument(boolean pdf) {
         Intent picker = new Intent(Intent.ACTION_OPEN_DOCUMENT);
         picker.addCategory(Intent.CATEGORY_OPENABLE);
@@ -348,6 +362,16 @@ public final class MainActivity extends Activity {
         }
         Uri uri = data.getData();
         if (uri == null) return;
+        if (requestCode == SCAN_QR) {
+            LocalVisionTools.scanBarcode(this, uri,
+                (message, success) -> runOnUiThread(() -> show(message, false)));
+            return;
+        }
+        if (requestCode == OFFLINE_OCR) {
+            LocalVisionTools.extractText(this, uri,
+                (message, success) -> runOnUiThread(() -> show(message, false)));
+            return;
+        }
         if (requestCode == CHOOSE_IMAGE || requestCode == CHOOSE_PDF) {
             String apiKey = settings.getString("gemini_key", "");
             if (apiKey.isEmpty()) {

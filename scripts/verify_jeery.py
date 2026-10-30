@@ -10,10 +10,20 @@ def require(condition, message):
         raise SystemExit("VERIFICATION FAILED: " + message)
 
 license_path = root / "LICENSE"
-require(license_path.exists(), "original source LICENSE missing")
+require(license_path.exists(), "jerry project LICENSE missing")
 license_text = license_path.read_text()
-require("Tech GPTx" in license_text and "TAMCL" in license_text,
-        "original license/credit modified")
+require("TANIM BOSS — JERRY AI ASSISTANT PROJECT LICENSE" in license_text,
+        "jerry root project license does not show Tanim Boss")
+require("Copyright © 2026 Tanim Boss" in license_text,
+        "jerry copyright line missing")
+upstream_license = root / "THIRD_PARTY_LICENSES/techgptx-playlist-LICENSE.txt"
+require(upstream_license.is_file(), "original third-party license missing")
+upstream_text = upstream_license.read_text()
+require(upstream_text.startswith("TECH GPTx SOURCE CODE & CONTENT CREATOR LICENSE (TAMCL v1.0)")
+        and "Copyright (c) 2026 Tech GPTx" in upstream_text,
+        "third-party license has been altered or replaced")
+require("You may NOT remove" in upstream_text,
+        "required original third-party license condition missing")
 tanim_notice = root / "LICENSE-TANIM-BOSS.md"
 require(tanim_notice.exists(), "Tanim Boss contributions notice missing from Android source")
 tanim_text = tanim_notice.read_text()

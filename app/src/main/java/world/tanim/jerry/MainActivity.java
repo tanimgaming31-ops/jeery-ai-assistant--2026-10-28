@@ -41,6 +41,8 @@ public final class MainActivity extends Activity {
     private static final int EXPORT_MEMORY = 101;
     private static final int IMPORT_MEMORY = 102;
     private static final int NOTIFY_REQUEST = 103;
+    private static final int CHOOSE_IMAGE = 105;
+    private static final int CHOOSE_PDF = 106;
     private static final int BG = Color.rgb(12, 10, 25);
     private static final int PURPLE = Color.rgb(139, 92, 246);
 
@@ -104,6 +106,8 @@ public final class MainActivity extends Activity {
         area.addView(button("Send / Run command", () -> send(question.getText().toString())));
         area.addView(button("Speak to jerry (push to talk)", this::recognize));
         area.addView(button("Set / Replace Gemini API key", this::configureKey));
+        area.addView(button("Analyze selected photo / screenshot", () -> chooseDocument(false)));
+        area.addView(button("Read PDF (first 3 pages)", () -> chooseDocument(true)));
         area.addView(button("My saved memories", () -> show(memory.summary(), false)));
         area.addView(button("Export memory JSON", this::exportMemory));
         area.addView(button("Import memory JSON", this::importMemory));
@@ -273,6 +277,17 @@ public final class MainActivity extends Activity {
             show("Android speech recognition is unavailable: " + ex.getMessage(), false);
         }
     }
+    private void chooseDocument(boolean pdf) {
+        Intent picker = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        picker.addCategory(Intent.CATEGORY_OPENABLE);
+        picker.setType(pdf ? "application/pdf" : "image/*");
+        try {
+            startActivityForResult(picker, pdf ? CHOOSE_PDF : CHOOSE_IMAGE);
+        } catch (Exception ex) {
+            show("Cannot open the Android file picker: " + ex.getMessage(), false);
+        }
+    }
+
     private void exportMemory() {
         Intent i = new Intent(Intent.ACTION_CREATE_DOCUMENT);
         i.addCategory(Intent.CATEGORY_OPENABLE);
@@ -297,6 +312,29 @@ public final class MainActivity extends Activity {
         }
         Uri uri = data.getData();
         if (uri == null) return;
+        if (requestCode == CHOOSE_IMAGE || requestCode == CHOOSE_PDF) {
+            String apiKey = settings.getString("gemini_key", "");
+            if (apiKey.isEmpty()) {
+                show("Set your Gemini API key before analyzing an image or PDF.", false);
+                return;
+            }
+            boolean pdf = requestCode == CHOOSE_PDF;
+            new AlertDialog.Builder(this)
+                .setTitle(pdf ? "Analyze selected PDF?" : "Analyze selected image?")
+                .setMessage("The selected " + (pdf ? "PDF (first 3 pages)" : "image")
+                    + " will be sent to Google's Gemini API for analysis. "
+                    + "Only continue if you consent and the file contains no information "
+                    + "you do not want to share.")
+                .setNegativeButton("Cancel", (d, w) ->
+                    show("File analysis cancelled. Nothing was uploaded.", false))
+                .setPositiveButton("Analyze", (d, w) -> {
+                    show("Analyzing selected file with Gemini...", false);
+                    VisionClient.analyze(this, uri, pdf, apiKey, (message, success) ->
+                        runOnUiThread(() -> show(message, success)));
+                })
+                .show();
+            return;
+        }
         try {
             if (requestCode == EXPORT_MEMORY) {
                 try (OutputStream out = getContentResolver().openOutputStream(uri)) {
@@ -341,6 +379,7 @@ public final class MainActivity extends Activity {
                 + "back / go home / take screenshot\n"
                 + "whatsapp message Hello there (draft only)\n"
                 + "read notifications\nreply latest notification Hello (confirm before sending)\n"
+                + "Use buttons to analyze a photo, screenshot or PDF (Gemini consent required)\n"
                 + "remember that I like Bengali\nwhat do you remember\n"
                 + "remind me in 10 minutes to drink water\n"
                 + "remind me in 2 hours to take a break\n\n"

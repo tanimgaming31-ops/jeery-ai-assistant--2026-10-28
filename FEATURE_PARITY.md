@@ -1,0 +1,29 @@
+# Independent jerry feature-parity checklist
+
+| Feature | Independent code status | Device validation |
+| --- | --- | --- |
+| jerry/Tanim Boss identity and dark native UI | Implemented | Not yet tested |
+| Gemini text responses with user-provided key | Implemented (REST) | Not yet tested |
+| Push-to-talk and speech output | Implemented via Android services | Not yet tested |
+| Gemini Live low-latency full duplex | Not implemented | Not tested |
+| Continuous wake word / foreground microphone service | Not implemented | Not tested |
+| Local memory / JSON import and export | Implemented | Not yet tested |
+| Installed-app search and launch | Implemented, launcher apps only | Not yet tested |
+| YouTube search in browser/app | Implemented external search | Not yet tested |
+| YouTube automatic video playback | Not implemented | Not tested |
+| Camera open / flashlight / media volume | Implemented with permission checks | Not yet tested |
+| Back / home voice actions | Implemented with user-enabled accessibility | Not yet tested |
+| Voice screenshot saved to gallery | Implemented API 30+ with accessibility permission | Not yet tested |
+| WhatsApp share draft | Implemented via supported Android share intent | Not yet tested |
+| WhatsApp/IMO/Messenger contact lookup and auto-send | Not implemented | Not tested |
+| Notification read and approved quick reply | Not implemented | Not tested |
+| Basic notifications/reminders | Implemented; not guaranteed exact timing | Not yet tested |
+| Background media, multi-app routines, macros | Not implemented | Not tested |
+| Screenshot AI vision, PDF reading, OCR | Not implemented | Not tested |
+| 3D avatar / lip sync / emotion engine | Not implemented | Not tested |
+| Security camera / face recognition | Not implemented | Not tested |
+| Smart home, router, advanced file manager | Not implemented | Not tested |
+
+The earlier app remains on main. This branch contains original independent
+code; it does not carry forward the previous app's source or its associated
+license. Exact behavior parity is a project goal, not a current claim.

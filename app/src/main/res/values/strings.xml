@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">jerry Independent</string>
+    <string name="service_description">Optional voice-controlled back, home and screenshot actions. Enable only when desired.</string>
+</resources>

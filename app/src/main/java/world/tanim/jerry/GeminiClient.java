@@ -19,7 +19,7 @@ public final class GeminiClient {
         new Thread(() -> {
             HttpURLConnection c = null;
             try {
-                URL u = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="
+                URL u = new URL("https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key="
                         + URLEncoder.encode(key, "UTF-8"));
                 c = (HttpURLConnection) u.openConnection();
                 c.setRequestMethod("POST");

@@ -5,8 +5,8 @@
 | jerry/Tanim Boss identity and dark native UI | Implemented | Not yet tested |
 | Gemini text responses with user-provided key | Implemented (REST) | Not yet tested |
 | Push-to-talk and speech output | Implemented via Android services | Not yet tested |
-| Gemini Live low-latency full duplex | Not implemented | Not tested |
-| Continuous wake word / foreground microphone service | Not implemented | Not tested |
+| Gemini Live native audio conversation (foreground) | New WebSocket and PCM16 microphone/speaker code using Gemini 3.8 Live; Start/Stop controls | APK compile pending; real phone/API test needed |
+| Continuous wake word / foreground microphone service | Not implemented; Live call runs only while foreground Activity is active | Not tested |
 | Local memory / JSON import and export | Implemented | Not yet tested |
 | Installed-app search and launch | Implemented, launcher apps only | Not yet tested |
 | YouTube search in browser/app | Implemented external search | Not yet tested |

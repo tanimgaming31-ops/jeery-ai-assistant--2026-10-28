@@ -131,6 +131,12 @@ def replace_text(text, path):
 def prepare(out):
     out.mkdir(parents=True, exist_ok=True)
     fetch_part7(out)
+    # Keep both notices in the downloadable complete Android source tree.
+    # The original third-party LICENSE must remain untouched.
+    tanim_notice = Path(__file__).resolve().parent.parent / "LICENSE-TANIM-BOSS.md"
+    if not tanim_notice.is_file():
+        raise RuntimeError("Tanim Boss contributions notice is missing from repository")
+    shutil.copyfile(tanim_notice, out / "LICENSE-TANIM-BOSS.md")
     edits = 0
     for path in out.rglob("*"):
         if not path.is_file() or path.suffix.lower() not in TEXT_EXT:

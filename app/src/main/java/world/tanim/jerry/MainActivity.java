@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
+import android.provider.Settings;
 import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -106,6 +107,22 @@ public final class MainActivity extends Activity {
         area.addView(button("My saved memories", () -> show(memory.summary(), false)));
         area.addView(button("Export memory JSON", this::exportMemory));
         area.addView(button("Import memory JSON", this::importMemory));
+        area.addView(button("Enable notification reading and replies", () -> {
+            new AlertDialog.Builder(this)
+                .setTitle("Optional notification access")
+                .setMessage("Android will ask you to enable jerry Independent notification access. "
+                    + "This allows the app to read notifications only when you request it. "
+                    + "Replies require you to confirm the recipient app and message each time. "
+                    + "You can turn this off in Android settings.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Open Settings", (d, w) -> {
+                    try {
+                        startActivity(new Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS));
+                    } catch (Exception ex) {
+                        show("Cannot open notification access settings: " + ex.getMessage(), false);
+                    }
+                }).show();
+        }));
         area.addView(button("Enable Android accessibility actions", () -> {
             try { PhoneActions.execute(this, "open accessibility settings"); }
             catch (Exception e) { show("Could not open Android settings: " + e.getMessage(), false); }
@@ -160,6 +177,36 @@ public final class MainActivity extends Activity {
                                 show("All local notes deleted.", false);
                             } catch (JSONException e) { show("Could not delete: " + e.getMessage(), false); }
                         }).show();
+                return;
+            }
+            if (low.equals("read notifications") || low.equals("show notifications")) {
+                show(JerryNotificationListener.summarize(), false);
+                return;
+            }
+            if (low.startsWith("reply latest notification ")) {
+                String response = request.substring("reply latest notification ".length()).trim();
+                if (response.isEmpty()) {
+                    show("Please specify a reply message.", false);
+                    return;
+                }
+                JerryNotificationListener.ReplyCandidate candidate =
+                    JerryNotificationListener.findLatestReplyable();
+                if (candidate == null) {
+                    show("No active replyable notification found. Enable notification access; "
+                            + "some apps do not allow notification quick reply.", false);
+                    return;
+                }
+                new AlertDialog.Builder(this)
+                    .setTitle("Approve notification reply?")
+                    .setMessage("App: " + candidate.app + "\nConversation: " + candidate.title
+                            + "\nPrevious notification: " + candidate.excerpt
+                            + "\n\nYour message: " + response
+                            + "\n\nOnly tap Send if this is the intended recipient.")
+                    .setNegativeButton("Cancel", (d, w) ->
+                            show("Notification reply cancelled. Nothing was sent.", false))
+                    .setPositiveButton("Send", (d, w) ->
+                            show(JerryNotificationListener.sendApprovedReply(candidate, response), false))
+                    .show();
                 return;
             }
             String reminder = Reminders.parseAndSchedule(this, request);
@@ -293,6 +340,7 @@ public final class MainActivity extends Activity {
                 + "torch on / torch off\nvolume up / volume down\n"
                 + "back / go home / take screenshot\n"
                 + "whatsapp message Hello there (draft only)\n"
+                + "read notifications\nreply latest notification Hello (confirm before sending)\n"
                 + "remember that I like Bengali\nwhat do you remember\n"
                 + "remind me in 10 minutes to drink water\n"
                 + "remind me in 2 hours to take a break\n\n"

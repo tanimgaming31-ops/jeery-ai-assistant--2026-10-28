@@ -21,6 +21,9 @@ represented as implemented unless code for it exists here and tests confirm it.
 - Android local reminder notifications (notification permission required)
 - Opt-in Android notification reading and per-message confirmation for supported quick replies
 - User-selected screenshot/photo AI reading and PDF vision for the first 3 pages (explicit consent, Gemini API key required)
+- Direct Gemini 3.8 Live audio sessions with user-activated microphone and Stop button; opt-in Android microphone foreground service with persistent notification and Stop action (not device-tested)
+- Offline ML Kit QR/barcode scanning and Latin printed-text recognition from files the user selects
+- Android Storage Access Framework file selection, safe open and explicit clipboard copy/paste
 
 ## Not implemented or not feature-parity verified
 Continuous hands-free wake-word, Gemini Live audio-to-audio, continuous screen-reading AI,

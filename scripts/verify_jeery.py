@@ -14,6 +14,14 @@ require(license_path.exists(), "original source LICENSE missing")
 license_text = license_path.read_text()
 require("Tech GPTx" in license_text and "TAMCL" in license_text,
         "original license/credit modified")
+tanim_notice = root / "LICENSE-TANIM-BOSS.md"
+require(tanim_notice.exists(), "Tanim Boss contributions notice missing from Android source")
+tanim_text = tanim_notice.read_text()
+require("Copyright © 2026 Tanim Boss" in tanim_text,
+        "Tanim Boss contribution copyright missing")
+require("does not override".lower() in tanim_text.lower(),
+        "Tanim notice must explicitly preserve upstream rights")
+
 require(len(list((root / "app/src/main/java").rglob("*.kt"))) >= 20,
         "original Kotlin source tree appears incomplete")
 

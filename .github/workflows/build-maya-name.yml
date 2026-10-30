@@ -1,0 +1,102 @@
+name: Build Maya name-only from original jerry V25
+on:
+  push:
+    branches:
+      - feature/maya-name-preserve-jerry
+    paths:
+      - '.github/workflows/build-maya-name.yml'
+      - 'scripts/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: maya-name-only-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    steps:
+      - name: Checkout original jerry V25 base and name-only script
+        uses: actions/checkout@v4
+
+      - name: Check existing V25 adaptation tests
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Prepare original Android feature tree
+        run: python3 scripts/prepare_jeery.py build/jeery
+
+      - name: Apply original V25 UI and profile
+        run: python3 scripts/customize_jerry.py build/jeery
+
+      - name: Verify V25 baseline and legal notice
+        run: python3 scripts/verify_jeery.py build/jeery
+
+      - name: Rename visible assistant from jerry to Maya only
+        run: python3 scripts/rebrand_maya.py build/jeery
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Install Android SDK 34
+        run: |
+          "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --install 'platforms;android-34' 'build-tools;34.0.0' || sdkmanager --install 'platforms;android-34' 'build-tools;34.0.0'
+
+      - name: Compile V25 Android Kotlin source with Maya name
+        working-directory: build/jeery
+        run: |
+          chmod +x ./gradlew
+          ./gradlew --no-daemon --stacktrace :app:assembleDebug
+
+      - name: Verify Maya label, same package, and V25 features
+        run: |
+          set -euo pipefail
+          APK="build/jeery/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/34.0.0/aapt" dump badging "$APK" | tee build/maya-package-info.txt
+          grep -q "package: name='ai.jeery.assistant'" build/maya-package-info.txt
+          grep -q "application-label:'Maya'" build/maya-package-info.txt
+          test -f build/jeery/MAYA_NAME_ONLY_CHANGE.txt
+          test -f build/jeery/app/src/main/java/com/jarvis/assistant/background/JarvisConversationService.kt
+          test -f build/jeery/app/src/main/java/com/jarvis/assistant/vision/VisualTaskOrchestrator.kt
+          test -f build/jeery/app/src/main/java/com/jarvis/assistant/automation/whatsapp/WhatsAppAssistant.kt
+          mkdir -p dist
+          cp "$APK" dist/Maya-V25-name-only.apk
+          cp build/jeery/MAYA_NAME_ONLY_CHANGE.txt dist/NAME-CHANGE-REPORT.txt
+          cp build/maya-package-info.txt dist/package-info.txt
+          sha256sum dist/Maya-V25-name-only.apk > dist/sha256.txt
+          printf '%s\n' 'Maya display/voice name; original jerry V25 app UI and features unchanged.' > dist/README-FIRST.txt
+          printf '%s\n' 'This is a debug build with a runner signing key. Back up app data before reinstalling.' >> dist/README-FIRST.txt
+          printf '%s\n' 'Compilation does not prove real phone feature functionality.' >> dist/README-FIRST.txt
+
+      - name: Save downloadable Maya APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Maya-V25-original-design-name-only
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Publish direct Maya APK for Android Chrome
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: maya-v25-name-only-${{ github.run_number }}
+        run: |
+          gh release create "$RELEASE_TAG" dist/Maya-V25-name-only.apk dist/sha256.txt \
+            --title "Maya V25 — original jerry UI and features, name only #${{ github.run_number }}" \
+            --target "$GITHUB_SHA" \
+            --notes "Maya public display/voice name. Original V25 source, features, futuristic orb UI and package ID preserved; license and legally required attribution unchanged. Debug build only; phone testing and Android permissions are needed. Installing over jerry may require a matching signing certificate." \
+            --prerelease
+
+      - name: Direct download link
+        if: success()
+        run: |
+          echo "## Maya-V25-name-only.apk" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://github.com/${{ github.repository }}/releases/download/maya-v25-name-only-${{ github.run_number }}/Maya-V25-name-only.apk" >> "$GITHUB_STEP_SUMMARY"

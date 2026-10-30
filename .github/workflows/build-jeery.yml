@@ -8,6 +8,10 @@ on:
       - '.github/workflows/build-jeery.yml'
       - 'scripts/**'
       - 'tests/**'
+      - 'LICENSE'
+      - 'LICENSE-TANIM-BOSS.md'
+      - 'THIRD_PARTY_LICENSES/**'
+      - 'README.md'
 
 permissions:
   contents: write

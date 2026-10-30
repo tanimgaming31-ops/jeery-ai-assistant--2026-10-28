@@ -537,7 +537,7 @@ public final class MainActivity extends Activity {
                 + "open Instagram / open [installed app name]\n"
                 + "youtube search cute cats\nsearch weather in Dubai\n"
                 + "torch on / torch off\nvolume up / volume down\n"
-                + "back / go home / take screenshot\n"
+                + "back / go home / take screenshot\n"\n                + "tap Settings / type hello / scroll down / swipe up\\n"\n                + "brightness 40% / volume 30% / call Khalid (dialer only)\\n"
                 + "whatsapp message Hello there (draft only)\n"
                 + "read notifications\nreply latest notification Hello (confirm before sending)\n"
                 + "Use buttons to analyze a photo, screenshot or PDF (Gemini consent required)\n"

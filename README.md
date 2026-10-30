@@ -1,8 +1,12 @@
 # jerry AI Assistant — Independent Android implementation
 
-**Project:** jerry by Tanim Boss  
+**Project:** jerry AI Assistant by **TaNiM world (Tanim Boss)**  
 **Branch:** `feature/independent-jerry-source`  
-**Status:** Clean independent implementation in progress; NOT feature-equivalent yet.
+**Publisher / developer branding:** TaNiM world (Tanim Boss)  
+**Copyright for independently authored code:** © 2026 TaNiM world (Tanim Boss)  
+**Status:** Independent implementation in progress; NOT feature-equivalent yet.
+
+This independent implementation carries TaNiM world branding without the earlier source's original author branding. External dependencies retain their own legal terms.  
 
 The **existing stable jerry app on `main` is unchanged**. This branch has an
 independently authored Android app under app/ rather than downloading or

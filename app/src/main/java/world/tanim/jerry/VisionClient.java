@@ -51,7 +51,7 @@ public final class VisionClient {
                 payload.put("contents", new JSONArray().put(new JSONObject()
                     .put("role", "user").put("parts", parts)));
                 URL url = new URL("https://generativelanguage.googleapis.com/v1beta/models/"
-                        + "gemini-2.5-flash:generateContent?key="
+                        + "gemini-3.8-flash:generateContent?key="
                         + URLEncoder.encode(key, "UTF-8"));
                 conn = (HttpURLConnection) url.openConnection();
                 conn.setRequestMethod("POST");

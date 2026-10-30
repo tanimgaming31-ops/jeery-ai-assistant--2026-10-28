@@ -3,6 +3,10 @@ package world.tanim.jerry;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.database.Cursor;
+import android.provider.ContactsContract;
+import java.util.ArrayList;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -60,6 +64,39 @@ public final class PhoneActions {
                 }
                 return "No available flashlight.";
             }
+            if (low.matches("(?:set )?volume \\d{1,3}%?")) {
+                String digits = low.replaceAll("[^0-9]", "");
+                int pct = Integer.parseInt(digits);
+                if (pct > 100) return "Volume percentage must be between 0 and 100.";
+                AudioManager audio = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
+                int maximum = audio.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+                audio.setStreamVolume(AudioManager.STREAM_MUSIC,
+                        Math.round(maximum * pct / 100f), AudioManager.FLAG_SHOW_UI);
+                int now = audio.getStreamVolume(AudioManager.STREAM_MUSIC);
+                return "Media volume set to " + Math.round(100f * now / maximum) + "%.";
+            }
+            if (low.matches("(?:set )?brightness \\d{1,3}%?")) {
+                int pct = Integer.parseInt(low.replaceAll("[^0-9]", ""));
+                if (pct > 100) return "Brightness percentage must be between 0 and 100.";
+                if (!Settings.System.canWrite(activity)) {
+                    Intent permission = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS,
+                            Uri.parse("package:" + activity.getPackageName()));
+                    activity.startActivity(permission);
+                    return "Grant Modify system settings to jerry and repeat the brightness command.";
+                }
+                Settings.System.putInt(activity.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS_MODE,
+                        Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+                boolean wrote = Settings.System.putInt(activity.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS, Math.round(255f * pct / 100));
+                if (!wrote) return "Android refused to update brightness.";
+                int saved = Settings.System.getInt(activity.getContentResolver(),
+                        Settings.System.SCREEN_BRIGHTNESS, -1);
+                return "Brightness set to approximately " + Math.round(saved * 100f / 255f) + "%.";
+            }
+            if (low.startsWith("call ") && low.length() > 5) {
+                return openContactDialer(activity, text.substring(5).trim());
+            }
             if (low.equals("volume up") || low.equals("volume down")) {
                 AudioManager audio = (AudioManager) activity.getSystemService(Context.AUDIO_SERVICE);
                 audio.adjustStreamVolume(AudioManager.STREAM_MUSIC,
@@ -113,6 +150,47 @@ public final class PhoneActions {
                     + " — " + ex.getMessage();
         }
         return null;
+    }
+    private static String openContactDialer(Activity activity, String query) {
+        if (activity.checkSelfPermission(Manifest.permission.READ_CONTACTS)
+                != PackageManager.PERMISSION_GRANTED) {
+            activity.requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, 116);
+            return "Allow Contacts permission and repeat the call command.";
+        }
+        ArrayList<String> display = new ArrayList<>();
+        ArrayList<String> numbers = new ArrayList<>();
+        try (Cursor cursor = activity.getContentResolver().query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                new String[]{ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER},
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " LIKE ?",
+                new String[]{"%" + query + "%"},
+                ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME + " COLLATE NOCASE ASC")) {
+            if (cursor == null) return "Contacts provider unavailable.";
+            while (cursor.moveToNext() && display.size() < 20) {
+                String name = cursor.getString(0);
+                String number = cursor.getString(1);
+                if (name != null && number != null && !number.isEmpty()) {
+                    display.add(name + " — " + number);
+                    numbers.add(number);
+                }
+            }
+        } catch (SecurityException error) {
+            return "Android denied access to contacts.";
+        }
+        if (display.isEmpty()) return "No contact found with name: " + query;
+        activity.runOnUiThread(() ->
+            new AlertDialog.Builder(activity)
+                .setTitle("Choose contact to dial")
+                .setItems(display.toArray(new String[0]), (dialog, which) -> {
+                    Intent dialer = new Intent(Intent.ACTION_DIAL,
+                            Uri.fromParts("tel", numbers.get(which), null));
+                    activity.startActivity(dialer);
+                })
+                .setNegativeButton("Cancel", null)
+                .show());
+        return "Found " + display.size() + " matching contacts. Select one to open the dialer; "
+                + "Android will NOT automatically place the call.";
     }
     private static String accessibilityRequired(Activity activity) {
         activity.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));

@@ -69,8 +69,8 @@ class JeeryBrandTests(unittest.TestCase):
 
     def test_jerry_app_creator_metadata_preserves_upstream_credit(self):
         upstream_gradle = (
-            'val developerName = configuredValue("JARVIS_DEVELOPER_NAME")?.ifBlank { null } ?: "Tech GPTx"\\n'
-            'val copyrightOwner = configuredValue("JARVIS_COPYRIGHT_OWNER")?.ifBlank { null } ?: "Tech GPTx"\\n'
+            'val developerName = configuredValue("JARVIS_DEVELOPER_NAME")?.ifBlank { null } ?: "Tech GPTx"\n'
+            'val copyrightOwner = configuredValue("JARVIS_COPYRIGHT_OWNER")?.ifBlank { null } ?: "Tech GPTx"\n'
         )
         result = personalize_gradle_metadata(upstream_gradle)
         self.assertIn('?: "Tanim Boss"', result)

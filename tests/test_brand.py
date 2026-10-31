@@ -53,5 +53,30 @@ class JeeryBrandTests(unittest.TestCase):
         self.assertIn('"jeery"', result)
 
 
+    def test_jerry_license_ownership_and_upstream_terms(self):
+        repo = Path(__file__).resolve().parents[1]
+        main = (repo / "LICENSE").read_text(encoding="utf-8")
+        notice = (repo / "LICENSE-TANIM-BOSS.md").read_text(encoding="utf-8")
+        self.assertTrue(main.startswith("TANIM BOSS — JERRY AI ASSISTANT PROJECT LICENSE"))
+        self.assertIn("Copyright © 2026 Tanim Boss", main)
+        self.assertIn("6. ORIGINAL UPSTREAM SOURCE LICENSE — REPRODUCED VERBATIM", main)
+        self.assertIn("TECH GPTx SOURCE CODE & CONTENT CREATOR LICENSE (TAMCL v1.0)", main)
+        self.assertIn('You may NOT remove "Tech GPTx" attribution', main)
+        self.assertIn("JERRY AI ASSISTANT — TANIM BOSS", notice)
+        self.assertIn("does not override", notice)
+        self.assertNotIn("MAYA AI ASSISTANT", main.upper())
+        self.assertNotIn("MAYA AI ASSISTANT", notice.upper())
+
+    def test_docs_point_to_actual_jerry_apk(self):
+        repo = Path(__file__).resolve().parents[1]
+        workflow = (repo / ".github/workflows/build-jeery.yml").read_text(encoding="utf-8")
+        checklist = (repo / "TEST_CHECKLIST.md").read_text(encoding="utf-8")
+        self.assertIn("name: Build jerry Android APK", workflow)
+        self.assertIn("name: jerry-android-apk", workflow)
+        self.assertIn("dist/jerry.apk", workflow)
+        self.assertIn("jerry-android-apk", checklist)
+        self.assertIn("jerry.apk", checklist)
+
+
 if __name__ == "__main__":
     unittest.main()

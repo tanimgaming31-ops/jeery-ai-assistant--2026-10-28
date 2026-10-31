@@ -1,7 +1,7 @@
 import unittest
 from pathlib import Path
 
-from scripts.prepare_jeery import replace_text, PACKAGE, NAME
+from scripts.prepare_jeery import replace_text, PACKAGE, NAME, personalize_gradle_metadata
 
 
 class JeeryBrandTests(unittest.TestCase):
@@ -66,6 +66,18 @@ class JeeryBrandTests(unittest.TestCase):
         self.assertIn("does not override", notice)
         self.assertNotIn("MAYA AI ASSISTANT", main.upper())
         self.assertNotIn("MAYA AI ASSISTANT", notice.upper())
+
+    def test_jerry_app_creator_metadata_preserves_upstream_credit(self):
+        upstream_gradle = (
+            'val developerName = configuredValue("JARVIS_DEVELOPER_NAME")?.ifBlank { null } ?: "Tech GPTx"\\n'
+            'val copyrightOwner = configuredValue("JARVIS_COPYRIGHT_OWNER")?.ifBlank { null } ?: "Tech GPTx"\\n'
+        )
+        result = personalize_gradle_metadata(upstream_gradle)
+        self.assertIn('?: "Tanim Boss"', result)
+        self.assertIn('Tanim Boss (original Jerry additions); Tech GPTx (upstream source)', result)
+        self.assertNotIn('?: "Tech GPTx"', result)
+        with self.assertRaises(RuntimeError):
+            personalize_gradle_metadata('not an expected upstream Gradle file')
 
     def test_docs_point_to_actual_jerry_apk(self):
         repo = Path(__file__).resolve().parents[1]

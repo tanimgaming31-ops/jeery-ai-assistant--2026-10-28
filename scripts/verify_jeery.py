@@ -39,6 +39,17 @@ require(len(list((root / "app/src/main/java").rglob("*.kt"))) >= 20,
 gradle = (root / "app/build.gradle.kts").read_text()
 require('applicationId = "ai.jeery.assistant"' in gradle, "wrong Android app ID")
 require('namespace = "com.jarvis.assistant"' in gradle, "internal Kotlin namespace broken")
+
+require('val developerName = configuredValue("JARVIS_DEVELOPER_NAME")?.ifBlank { null } ?: "Tanim Boss"' in gradle,
+        "Jerry app publisher must default to Tanim Boss")
+require('Tanim Boss (original Jerry additions); Tech GPTx (upstream source)' in gradle,
+        "build copyright metadata must distinguish original work from upstream")
+original_author = (root / "app/src/main/java/com/jarvis/assistant/security/DeveloperInfo.kt").read_text()
+require('const val DEVELOPER_NAME      = "Tech GPTx"' in original_author,
+        "original author attribution altered")
+require('const val COPYRIGHT_NOTICE    = "© 2026 Tech GPTx. All Rights Reserved."' in original_author,
+        "original upstream copyright notice altered")
+
 strings = (root / "app/src/main/res/values/strings.xml").read_text()
 for key in ("app_name", "jarvis_title", "chat_label_jarvis"):
     require('<string name="' + key + '">jerry</string>' in strings, "name resource: " + key)

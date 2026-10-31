@@ -1,18 +1,18 @@
-# jeery — Android phone acceptance checklist
+# jerry — Android phone acceptance checklist
 
-Run these tests on the installed `jeery.apk`. A successful GitHub Actions build verifies compilation, **not** full feature operation.
+Run these tests on the installed `jerry.apk`. A successful GitHub Actions build verifies compilation, **not** full feature operation.
 
 | # | Test | Expected result |
 |---|---|---|
 | 1 | Install APK | App installs without replacing Maya/Zoya/other apps |
-| 2 | Launch jeery | No crash or package/clone error; launcher label is **jeery** |
-| 3 | Settings and chat | Only **jeery** is assistant name; legally required original developer credits may remain |
+| 2 | Launch jerry | No crash or package/clone error; launcher label is **jeery** |
+| 3 | Settings and chat | Only **jerry** is assistant name; legally required original developer credits may remain |
 | 4 | Add Gemini API key and Test | Connected/failed accurately reported |
 | 5 | Activate microphone | Recording begins; microphone indicator shows |
 | 6 | Speak Bengali | AI answers audibly (if model supports Bengali) |
 | 7 | Interrupt assistant | AI speech stops; new speech accepted |
 | 8 | Background/standby | Foreground service remains per Android restrictions |
-| 9 | Say **hey jeery** | Wake word detected (pronunciation recognized via Vosk) |
+| 9 | Say **hey jerry** (also accepts **hey jeery**) | Wake word detected (pronunciation recognized via Vosk) |
 | 10 | Store and recall memory | Memory survives restart |
 | 11 | Turn torch on/off | Torch really switches |
 | 12 | Set volume 30% | Actual system media volume changes |
@@ -33,6 +33,6 @@ For any failure send: Android version, selected Gemini model, exact spoken comma
 
 ## How to obtain an APK
 
-- **Actions** → **Build jeery Android APK** → open the latest green-check run → **Artifacts** → **jeery-android-apk**.
-- If there is a manually triggered successful run, its `jeery.apk` is also in **Releases**.
+- **Actions** → **Build jerry Android APK** → open the latest green-check run → **Artifacts** → **jerry-android-apk**.
+- If there is a manually triggered successful run, its `jerry.apk` is also in **Releases**.
 - APK is a **debug test build**, not phone-tested and not signed for production.

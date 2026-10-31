@@ -133,6 +133,21 @@ def replace_text(text, path):
     return text
 
 
+
+def personalize_gradle_metadata(content):
+    """Brand the Jerry build without rewriting ownership of upstream source."""
+    originals = {
+        'val developerName = configuredValue("JARVIS_DEVELOPER_NAME")?.ifBlank { null } ?: "Tech GPTx"':
+            'val developerName = configuredValue("JARVIS_DEVELOPER_NAME")?.ifBlank { null } ?: "Tanim Boss"',
+        'val copyrightOwner = configuredValue("JARVIS_COPYRIGHT_OWNER")?.ifBlank { null } ?: "Tech GPTx"':
+            'val copyrightOwner = configuredValue("JARVIS_COPYRIGHT_OWNER")?.ifBlank { null } ?: "Tanim Boss (original Jerry additions); Tech GPTx (upstream source)"',
+    }
+    for original, branded in originals.items():
+        if content.count(original) != 1:
+            raise RuntimeError("Android publisher metadata anchor missing or duplicated")
+        content = content.replace(original, branded, 1)
+    return content
+
 def prepare(out):
     out.mkdir(parents=True, exist_ok=True)
     fetch_part7(out)
@@ -166,7 +181,7 @@ def prepare(out):
     old = 'applicationId = "com.jarvis.assistant"'
     if old not in content:
         raise RuntimeError("Gradle app identity anchor missing")
-    gradle.write_text(content.replace(old, 'applicationId = "' + PACKAGE + '"'))
+    gradle.write_text(personalize_gradle_metadata(content.replace(old, 'applicationId = "' + PACKAGE + '"')))
     settings = out / "settings.gradle.kts"
     s = settings.read_text()
     settings.write_text(re.sub(r'rootProject\.name\s*=\s*"[^"]+"',

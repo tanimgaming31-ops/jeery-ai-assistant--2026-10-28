@@ -1,57 +1,65 @@
-JERRY AI ASSISTANT — TANIM BOSS ORIGINAL CONTRIBUTIONS NOTICE
+MAYA AI ASSISTANT — TANIM BOSS ORIGINAL CONTRIBUTIONS NOTICE
 Copyright © 2026 Tanim Boss.
+All Rights Reserved in original contributions owned by Tanim Boss.
 
-Project branding: jerry
-Customization and project direction: Tanim Boss
+Project: Maya AI Assistant
+Assistant name: Maya
+Voice wake word: Hey Maya
+Original contribution author and customization: Tanim Boss
 Repository: https://github.com/tanimgaming31-ops/jeery-ai-assistant--2026-10-28
 
-1. SCOPE OF THIS NOTICE
+1. ORIGINAL CONTRIBUTIONS OWNED BY TANIM BOSS
 
-To the extent permitted by applicable law, and only to the extent that the
-rights are owned by Tanim Boss, Tanim Boss reserves rights in original,
-independently protectable additions made specifically for the jerry project,
-such as new app text, project branding materials, original documentation,
-custom UI contributions and other new material.
+Tanim Boss is the original author and copyright holder of those additions
+to Maya AI Assistant that Tanim Boss independently created and legally owns.
+These may include original written content, original documentation,
+original branding materials, original interface modifications, and
+independently authored improvements.
 
-This notice DOES NOT claim exclusive ownership of the complete Android source
-tree or any code, artwork, libraries, models, trademarks or content originating
-from third parties.
+This notice applies only to those protectable contributions actually owned
+by Tanim Boss. It is not a claim of authorship or exclusive ownership of
+the entire Android application or pre-existing software.
 
-2. ORIGINAL UPSTREAM SOURCE
+2. COPYRIGHT AND RESERVED RIGHTS
 
-This project adapts the Android assistant project published at:
-https://github.com/techgptx/Playlist
+Copyright © 2026 Tanim Boss.
 
-Original upstream copyright:
-Copyright (c) 2026 Tech GPTx (Tech GP Tax) / Rehaan. All Rights Reserved.
+All rights are reserved in the original contributions owned by Tanim Boss,
+except where written permission, another applicable license, or applicable
+law permits their use.
 
-That original material remains subject to the upstream:
-TECH GPTx SOURCE CODE & CONTENT CREATOR LICENSE (TAMCL v1.0).
+Without appropriate permission, another person may not falsely claim to
+have authored Tanim Boss's original contributions, remove Tanim Boss's
+copyright notices from those contributions, or redistribute proprietary
+material in violation of the rights Tanim Boss actually holds.
 
-The original license is reproduced in this repository's LICENSE file,
-unchanged. Its required attribution and content-creator conditions continue
-to apply when the upstream codebase is copied, adapted, demonstrated or
-distributed. This notice does not override, waive, supersede, or relicense
-any part of that original material.
+3. PROJECT IDENTITY
 
-3. TANIM BOSS ADDITIONS
+Application name: Maya AI Assistant
+Assistant name: Maya
+Wake word: Hey Maya
+Personal creator profile and project customization: Tanim Boss
 
-For original additions that Tanim Boss actually owns, all rights are
-reserved unless Tanim Boss separately provides written permission.
-This paragraph does not restrict rights already granted under the original
-upstream license, open-source dependency licenses, or applicable law.
+The project identity and creator profile describe Tanim Boss's
+customization of this version. They do not imply that Tanim Boss
+independently authored every underlying Android source file, model,
+dependency, or asset.
 
-4. ACCURATE PROJECT CREDIT
+4. EXISTING RIGHTS AND LEGAL NOTICES
 
-The customized assistant is called jerry, with the personal creator
-profile: Tanim Boss. Tanim Boss is responsible for naming, directing and
-customizing this version. This does not mean Tanim Boss wrote the original
-upstream code or trained the Gemini AI model.
+This notice does not override, waive, replace, or relicense rights and
+conditions that apply to pre-existing software or third-party components.
+
+Mandatory copyright notices, attributions, and applicable source license
+terms remain preserved separately in the repository's main LICENSE file.
+Third-party dependencies remain subject to their respective licenses.
 
 5. NO WARRANTY
 
-This notice provides no guarantee that any app functionality works on a
-particular device or that third-party services remain available.
+THE ORIGINAL CONTRIBUTIONS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY
+KIND TO THE EXTENT PERMITTED BY APPLICABLE LAW.
 
-For original project code see LICENSE. For this project's independent
-contributions see this file.
+This notice does not guarantee that all app features work on a particular
+device or that external services will remain available.
+
+© 2026 Tanim Boss — All Rights Reserved in Original Contributions.

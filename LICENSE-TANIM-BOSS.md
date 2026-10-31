@@ -1,57 +1,63 @@
-JERRY AI ASSISTANT — TANIM BOSS ORIGINAL CONTRIBUTIONS NOTICE
-Copyright © 2026 Tanim Boss.
+MAYA AI ASSISTANT — TANIM BOSS ORIGINAL CONTRIBUTIONS LICENSE
 
-Project branding: jerry
-Customization and project direction: Tanim Boss
-Repository: https://github.com/tanimgaming31-ops/jeery-ai-assistant--2026-10-28
+2026 Tanim Boss.
+All Rights Reserved.
 
-1. SCOPE OF THIS NOTICE
+Project Name: Maya AI Assistant
+Assistant Name: Maya
+Original Contributions Owner: Tanim Boss
+Project Branding and Customization: Tanim Boss
+Wake Word: Hey Maya
 
-To the extent permitted by applicable law, and only to the extent that the
-rights are owned by Tanim Boss, Tanim Boss reserves rights in original,
-independently protectable additions made specifically for the jerry project,
-such as new app text, project branding materials, original documentation,
-custom UI contributions and other new material.
+1. ORIGINAL CONTRIBUTIONS
 
-This notice DOES NOT claim exclusive ownership of the complete Android source
-tree or any code, artwork, libraries, models, trademarks or content originating
-from third parties.
+Tanim Boss is the original creator and copyright owner of all independently created contributions to Maya AI Assistant that are legally owned by Tanim Boss.
 
-2. ORIGINAL UPSTREAM SOURCE
+These contributions include original branding, independently authored source code, original documentation, custom interface designs, and original enhancements.
 
-This project adapts the Android assistant project published at:
-https://github.com/techgptx/Playlist
+2. COPYRIGHT OWNERSHIP
 
-Original upstream copyright:
-Copyright (c) 2026 Tech GPTx (Tech GP Tax) / Rehaan. All Rights Reserved.
+There is no copy of any kind, only the owner is the one.
 
-That original material remains subject to the upstream:
-TECH GPTx SOURCE CODE & CONTENT CREATOR LICENSE (TAMCL v1.0).
+2026 Tanim Boss.
 
-The original license is reproduced in this repository's LICENSE file,
-unchanged. Its required attribution and content-creator conditions continue
-to apply when the upstream codebase is copied, adapted, demonstrated or
-distributed. This notice does not override, waive, supersede, or relicense
-any part of that original material.
+All rights are reserved in the original contributions owned by Tanim Boss.
 
-3. TANIM BOSS ADDITIONS
+No person may falsely claim ownership of these original contributions or remove their copyright notices without authorization.
 
-For original additions that Tanim Boss actually owns, all rights are
-reserved unless Tanim Boss separately provides written permission.
-This paragraph does not restrict rights already granted under the original
-upstream license, open-source dependency licenses, or applicable law.
+3. PERMISSIONS AND RESTRICTIONS
 
-4. ACCURATE PROJECT CREDIT
+Unless permitted by Tanim Boss in writing or by applicable law, no person may:
 
-The customized assistant is called jerry, with the personal creator
-profile: Tanim Boss. Tanim Boss is responsible for naming, directing and
-customizing this version. This does not mean Tanim Boss wrote the original
-upstream code or trained the Gemini AI model.
+- Copy or redistribute proprietary original contributions.
+- Sell original proprietary contributions without permission.
+- Publish these contributions under another person's name.
+- Falsely claim authorship of Tanim Boss's original work.
+- Remove copyright notices from protected original contributions.
 
-5. NO WARRANTY
+4. PROJECT IDENTITY
 
-This notice provides no guarantee that any app functionality works on a
-particular device or that third-party services remain available.
+Application Name: Maya AI Assistant
+Assistant Name: Maya
+Creator of Original Contributions: Tanim Boss
+Project Branding: Tanim Boss
+Voice Wake Word: Hey Maya
 
-For original project code see LICENSE. For this project's independent
-contributions see this file.
+5. THIRD-PARTY RIGHTS
+
+This license applies only to the original contributions owned by Tanim Boss.
+
+It does not claim original authorship or exclusive ownership of pre-existing source code, third-party libraries, AI models, or externally created assets.
+
+Any separately applicable copyright notices and license obligations remain in effect.
+
+6. DISCLAIMER
+
+THE ORIGINAL CONTRIBUTIONS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, TO THE EXTENT PERMITTED BY APPLICABLE LAW.
+
+---
+
+ 2026 Tanim Boss.
+All Rights Reserved in Original Contributions.
+
+MAYA AI ASSISTANT — TANIM BOSS

@@ -2,6 +2,10 @@
 
 **jerry by Tanim Boss** — personal AI assistant branding and customization.
 
+**Jerry application publisher / customized build identity:** Tanim Boss. The generated Android Gradle metadata now defaults to Tanim Boss for the app's publisher identity and distinctly labels original Jerry additions versus the upstream source. This does **not** transfer ownership of the underlying Tech GPTx code.
+
+**Original source author:** Tech GPTx / Rehaan (upstream Android Part 7). Original authorship, copyright, attribution, and applicable TAMCL v1.0 terms are preserved in the full LICENSE and original-source credits.
+
 **Primary jerry project license:** [LICENSE — Tanim Boss](LICENSE)  
 **Tanim Boss original-contributions notice:** [LICENSE-TANIM-BOSS.md](LICENSE-TANIM-BOSS.md)  
 **Original upstream source terms:** Reproduced verbatim in [LICENSE, Section 6](LICENSE) (no separate third-party license folder)
